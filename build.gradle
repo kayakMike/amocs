@@ -1,0 +1,85 @@
+apply plugin: 'c'
+
+
+model {
+    toolChains {
+        gcc(Gcc) {
+            path "/opt/x-tools/arm-unknown-eabi/bin"
+            eachPlatform{tools->
+                tools.linker.executable            "arm-unknown-eabi-ld"
+                tools.cCompiler.executable         "arm-unknown-eabi-gcc"
+                tools.assembler.executable         "arm-unknown-eabi-as"
+                tools.staticLibArchiver.executable "arm-unknown-eabi-ar"
+                cCompiler.withArguments{args->
+                    args << "-g"
+                }
+            }
+            target("stellaris"){
+                linker.withArguments{args->
+                    args << "-T" << "lm3s6965evb.ld"
+                }
+            }
+            target("netduino2"){
+                linker.withArguments{args->
+                    args << "-T" << "stm32f205.ld"
+                }
+            }
+        }
+    }
+
+    platforms {
+        stellaris {
+            architecture "arm"
+        }
+        netduino2 {
+            architecture "arm"
+        }
+        
+    }
+
+    components {
+        stellaris(NativeExecutableSpec) {
+            targetPlatform "stellaris"
+            sources {
+                c {
+                    source {
+                        srcDirs "src/kernel", "src/stellaris"
+                        include "**/*.c", "**/*.h"
+                    }
+                    exportedHeaders {
+                        srcDir "src/kernel"
+                        include "**/*.h"
+                    }
+                }
+            }
+        }
+        netduino2(NativeExecutableSpec) {
+            targetPlatform "netduino2"
+            sources {
+                c {
+                    source {
+                        srcDirs "src/kernel", "src/netduino2"
+                        include "**/*.c", "**/*.h"
+                    }
+                    exportedHeaders {
+                        srcDir "src/kernel"
+                        include "**/*.h"
+                    }
+                }
+            }
+        }
+    }
+
+
+}
+
+task emulateNetduino2(type: Exec){
+    commandLine  '/opt/qemu/bin/qemu-system-arm'
+    args  '-machine', 'netduino2', '-cpu', 'cortex-m3', '-kernel', 'build/binaries/netduino2Executable/netduino2', '-nographic', '-s'
+}
+
+task emulateStellaris(type: Exec){
+    commandLine  '/opt/qemu/bin/qemu-system-arm'
+    args  '-machine', 'lm3s6965evb', '-cpu', 'cortex-m3', '-kernel', 'build/binaries/stellarisExecutable/stellaris', '-nographic', '-s'
+}
+
