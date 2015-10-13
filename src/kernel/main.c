@@ -1,5 +1,6 @@
 #include "micro_types.h"
 #include "uart0.h"
+#include "utf8.h"
 
 volatile uint32_t globalIndex;
 extern volatile uint32_t system_LongCount;
@@ -11,10 +12,18 @@ void sleep(void);
 
 int main(void){
     globalIndex=0; 
- 
     char message[]="Hello World! ";
     char string_buffer[12];
     uint32_t counter=0; 
+
+    uint8_t utf8Test[]="€";
+
+    uint32_t test= utf8_identify_next_code_point(utf8Test);
+        uart0_send(" UTF-8 TEST ");
+        uint_to_string_deterministic(string_buffer,test);
+        uart0_send(string_buffer);
+        uart0_send(" end of line \n");
+    
     while(1){
         uart0_send(message);
         uint_to_string_deterministic(string_buffer,system_LongCount);
@@ -27,7 +36,6 @@ int main(void){
         counter++;
     }
 }
-
 
 void sleep(void){
     uint32_t i;
@@ -69,7 +77,6 @@ uint8_t uint_to_string(char *string,uint32_t convert){
     string_reverse(string,(uint32_t)i);
     return i;
 }
-
 
 //forward facing deterministic version of the above.
 uint8_t uint_to_string_deterministic(char *string, uint32_t convert){
