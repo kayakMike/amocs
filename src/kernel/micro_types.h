@@ -5,6 +5,14 @@
 #define NULL ((void *) 0)
 #endif  //NULL
 
+#ifndef true 
+#define true 1
+#endif  //true
+
+#ifndef false 
+#define false 0 
+#endif  //false
+
 typedef signed char       int8_t;
 typedef signed short      int16_t;
 typedef signed int        int32_t;

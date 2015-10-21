@@ -15,18 +15,12 @@ typedef enum {
     CP2      =1,       //start of a two byte codepoint
     CP3      =2,       //start of a three byte codepoint
     CP4      =3,       //start of a four byte codepoint
-    /*not in current specification
-    CP5      =4,
-    CP6      =5
-    */
 }UTF8TokenType;
 
 typedef struct{
     UTF8TokenType type;
     uint32_t value;    
 }UTF8Token;
-
-
 
 //private function to identify the utf8 token type and parse the token value
 UTF8Token process_token(uint8_t byte){
@@ -47,20 +41,6 @@ UTF8Token process_token(uint8_t byte){
         res.value=(uint32_t)byte&0x1F; //0b1110xxxx designates start of 3 byte codepoint
         res.type=CP3;
     }
-    /*not in the current specification
-    else if((byte&0xF8)==0xF0){ //test most significant 5 bits
-        *value=byte&0x0F;        //0b11110xxx designates start of 4 byte codepoint
-        return CP4;
-    }
-    else if((byte&0xFC)==0xF8){ //test most significant 6 bits
-        *value=byte&0x07;         //0b111110xx designates start of 5 byte codepoint
-        return CP5;
-    }
-    else if((byte&0xFE)==0xFC){ //test most significant 7 bits
-        *value=byte&0x03;        //0b1111110x designates start of 6 byte codepoint
-        return CP6;
-    }
-    */
     else{                             //default case....
         res.value=0xFF;  //255
         res.type=INVALID;
@@ -68,8 +48,6 @@ UTF8Token process_token(uint8_t byte){
     return res;
 }
 
-
-// byteArray must be called on a UTF8 boundary
 UTF8Decode utf8_decode(uint8_t *byteArray){
     UTF8Decode res;
     UTF8Token token=process_token(*byteArray);
@@ -148,27 +126,6 @@ UTF8Encode utf8_encode(uint32_t codepoint){
         res.bytes[3]=((codepoint    )&0x3F)+0x80;
         res.count=4;
     }
-    /* not in the current specification
-    else if(codepoint<=0x3FFFFFF){
-        //five byte
-        res.bytes[0]=( codepoint>>24)      +0xF8;
-        res.bytes[1]=((codepoint>>18)&0x3F)+0x80;
-        res.bytes[2]=((codepoint>>12)&0x3F)+0x80;
-        res.bytes[3]=((codepoint>> 6)&0x3F)+0x80;
-        res.bytes[4]=((codepoint    )&0x3F)+0x80;
-        res.count=5;
-    }
-    else if(codepoint<=0x7FFFFFFF){
-        //six byte
-        res.bytes[0]=( codepoint>>30)      +0xFC;
-        res.bytes[1]=((codepoint>>24)&0x3F)+0x80;
-        res.bytes[2]=((codepoint>>18)&0x3F)+0x80;
-        res.bytes[3]=((codepoint>>12)&0x3F)+0x80;
-        res.bytes[4]=((codepoint>> 6)&0x3F)+0x80;
-        res.bytes[5]=((codepoint    )&0x3F)+0x80;
-        res.count=6;
-    }
-    */
     return res;
 }
 

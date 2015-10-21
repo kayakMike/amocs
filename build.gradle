@@ -11,7 +11,8 @@ model {
                 tools.assembler.executable         "arm-unknown-eabi-as"
                 tools.staticLibArchiver.executable "arm-unknown-eabi-ar"
                 cCompiler.withArguments{args->
-                    args << "-g"
+                    args << "-g" 
+                    args << "-fno-builtin"
                 }
             }
             target("stellaris"){
