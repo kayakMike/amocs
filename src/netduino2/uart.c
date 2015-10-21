@@ -15,3 +15,12 @@ void uart0_send(char *msg){
     }    
 }
 
+void send_message(uint8_t *message, uint32_t count){
+    uint32_t index=0;
+    while(index<count){
+        if(USART1_FLAG){
+            USART1_DATA=message[index];
+            index++;
+        }
+    }
+}

@@ -1,113 +1,63 @@
 #include "micro_types.h"
 #include "uart0.h"
 #include "utf8.h"
+#include "string.h"
 
 volatile uint32_t globalIndex;
 extern volatile uint32_t system_LongCount;
 
-uint8_t uint_to_string_deterministic(char *string, uint32_t convert);
-uint8_t uint_to_string(char *string,uint32_t convert);
-void string_reverse(char *string, uint32_t length);
 void sleep(void);
 
 int main(void){
     globalIndex=0; 
-    char message[]="Hello World! ";
-    char string_buffer[12];
-    uint32_t counter=0; 
+    char message[]="New Hello World! \n";
+    char string_buffer[]="------------";
+    uint32_t i=0;
+    uint32_t counter=0x10405; 
+ 
 
-    uint8_t utf8Test[]="€";
+    send_message(message,20);
+    UTF8Encode utf8Test;
+    utf8Test.bytes[0]=0x00;
+    utf8Test.bytes[1]=0x00;
+    utf8Test.bytes[2]=0x00;
+    utf8Test.bytes[3]=0x00;
 
-    uint32_t test= utf8_identify_next_code_point(utf8Test);
-        uart0_send(" UTF-8 TEST ");
-        uint_to_string_deterministic(string_buffer,test);
-        uart0_send(string_buffer);
-        uart0_send(" end of line \n");
-    
     while(1){
-        uart0_send(message);
-        uint_to_string_deterministic(string_buffer,system_LongCount);
-        uart0_send(string_buffer);
-        uart0_send(" go ");
-        uint_to_string_deterministic(string_buffer,counter);
+        uart0_send("Begin character");
+        utf8Test=utf8_encode(counter);
+        for(i=0;i<utf8Test.count;i++){
+            uint8_to_hexstring(utf8Test.bytes[i],string_buffer);
+            uart0_send(" ");
+            uart0_send(string_buffer);
+            uart0_send(" ");
+        }
+        uart0_send(" ");
+        send_message(utf8Test.bytes,utf8Test.count);
+        uart0_send(" ");
+        uint32_to_hexstring(counter,string_buffer);
         uart0_send(string_buffer);
         uart0_send(" end of line \n");
-        sleep();
+        
+        
         counter++;
+       sleep();
     }
 }
 
 void sleep(void){
     uint32_t i;
-    for(i=0;i<1000000;i++){
+    for(i=0;i<10000000;i++){
         globalIndex++;
     }
 }
 
-void string_reverse(char *string, uint32_t length){
-    char swp;
-    uint32_t left=0;
-    uint32_t right=length;
-    while(left<right){
-        swp=string[left];
-        string[left]=string[right];
-        string[right]=swp;
-        right--;
-        left++;
-    }
-}
-
-uint8_t uint_to_string(char *string,uint32_t convert){
-    char symbols[]="01234567890";
-    uint8_t sym=0;
-    uint8_t i=0;
-    //corner case. convert is zero
-    if(convert==0){
-        string[0]='0';
-        i=1; 
-    }
-    while(convert>0){
-       sym=convert%10;
-       convert=convert/10;
-       string[i]=symbols[sym];
-       i++;
-    }
-    string[i]='\0'; //null concatenate!
-    i--;
-    string_reverse(string,(uint32_t)i);
-    return i;
-}
-
-//forward facing deterministic version of the above.
-uint8_t uint_to_string_deterministic(char *string, uint32_t convert){
-
-    //uint32_t max value is 4 294 967 296, so decimal division to get the left 
-    //most digit is 1 000 000 000
-    //1 000 000 000 1
-    //  100 000 000 2
-    //   10 000 000 3
-    //    1 000 000 4
-    //      100 000 5
-    //       10 000 6
-    //        1 000 7
-    //          100 8
-    //           10 9
-    //            1 10
-    //            0 --end here
-    //only loop through 10 times! not bad.
-    char symbols[]="01234567890";
-    uint8_t sym=0;
-    uint8_t index=0;
-    uint32_t div=1000000000;
-    while(div>0){
-        sym=convert/div;
-        convert=convert-(sym*div);  //must strip the leading power of 10
-        string[index]=symbols[sym];
-        index++;
-        div=div/10;
-    }
-    string[index]='\0'; //null concatenate!
-    return index-1;
-}
 
 
+    //uint8_t utf8Test[]="€";
+    //uint8_t utf8Test[]={0xc3,0xaf,0x00};
+    //uint8_t utf8Test[]={0xc3,0xb0,0x00};  //LATIN SMALL LETTER ETH
+    //uint8_t utf8Test[]={0xc3,0xb1,0x00};  //LATIN SMALL LETTER N WITH TILDE
+    //uint8_t utf8Test[]={0xf0,0x90,0x90,0x81}; // DESERET LONG O 𐐅
+    //uint8_t utf8Test[]="~"i𐐁𐐁𐐁 𐌰𐌰𐌡𐌡𐌀𐌀𐇡𐇡𐆗𐆗𐆠𐆠𐊀𐊀𐊺𐊺𐋈𐋈𐐁𐐅𐐅;
+    //uint8_t utf8Test[]="₠";
