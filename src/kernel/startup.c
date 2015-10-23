@@ -100,7 +100,7 @@ typedef union{
 void sysinit_SysTick(void){
     system_LongCount=0;
 //    SYSTICK_RELOAD_VALUE.bits.counterValue=SYSTICK_CALIBRATION.bits.tenMillisec;
-    SYSTICK_RELOAD_VALUE.bits.counterValue=(2040000-1);
+    SYSTICK_RELOAD_VALUE.bits.counterValue=(1000000-1);
     SYSTICK_CONTROL.bits.selectClockSource=1;
     SYSTICK_CONTROL.bits.enableIrq=1;
     SYSTICK_CONTROL.bits.enableCounter=1;
@@ -157,7 +157,6 @@ void Reset_Handler(void){
     sysinit_memory();
 //    sysinit_SysTick();
 //    sysinit_stacks();
-
     main01();
 } 
 

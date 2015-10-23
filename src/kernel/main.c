@@ -3,6 +3,8 @@
 #include "utf8.h"
 #include "string.h"
 
+
+
 void util_sleep(uint32_t msec){
     uint32_t i;
     for(i=0;i<(100000*msec);i++){
@@ -20,6 +22,7 @@ void main00(void){
         util_sleep(100);
         i++;
     }
+
 }
 
 void main01(void){
@@ -42,8 +45,8 @@ void main01(void){
 
 void main02(void){
     while(true){
-//        uart0_send("-->-->--> main02 \n");
-        util_sleep(300);
+//        uart0_send("main02 send message to UART\n");
+        util_sleep(100);
     }
 }
 
@@ -53,7 +56,6 @@ void main03(void){
         util_sleep(400);
     }
 }
-
 
 
 //uint8_t utf8Test[]="€";
