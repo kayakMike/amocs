@@ -155,11 +155,10 @@ void sysinit_stacks(void){
 
 void Reset_Handler(void){
     sysinit_memory();
-    sysinit_SysTick();
-    sysinit_stacks();
+//    sysinit_SysTick();
+//    sysinit_stacks();
 
-    while(true){
-    } 
+    main01();
 } 
 
 void SysTick_Handler(void){

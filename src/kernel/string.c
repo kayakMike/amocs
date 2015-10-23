@@ -4,35 +4,21 @@
 //  "０１２３４５６７８９ＡＢＣＤＥＦ"
 
 
+uint8_t uint_to_string(uint32_t in, uint8_t base, uint8_t max, uint8_t *bytes){
 
-uint8_t uint32_to_hexstring(uint32_t convert, uint8_t *bytes){
-    char symbols[]="0123456789ABCDEF";
-    uint8_t sym=0;
-    uint8_t index=0;
+    uint8_t symbols[]="0123456789ABCDEF";
     uint32_t div=0x10000000;
+    uint32_t sym=0;
+    uint32_t index=0;
     while(div>0){
-        sym=convert/div;
-        convert=convert-(sym*div);  
+        sym=in/div;
+        in=in-(sym*div);  
         bytes[index]=symbols[sym];
         index++;
-        div=div/0x10;
+        div=div/base;
     }
-    bytes[index]='\0'; 
+    bytes[index]='\0';
     return index;
 }
 
-uint8_t uint8_to_hexstring(uint8_t convert, uint8_t *bytes){
-    char symbols[]="0123456789ABCDEF";
-    uint8_t sym=0;
-    uint8_t index=0;
-    uint32_t div=0x10;
-    while(div>0){
-        sym=convert/div;
-        convert=convert-(sym*div);  
-        bytes[index]=symbols[sym];
-        index++;
-        div=div/0x10;
-    }
-    bytes[index]='\0'; 
-    return index;
-}
+

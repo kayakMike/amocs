@@ -3,71 +3,57 @@
 #include "utf8.h"
 #include "string.h"
 
-//struct Stack{
-
-    /*   ProgramStatusRegister
-    *    ProgramCounter
-    *    LinkRegister
-    *    StackPointer
-    *    r12 - r0
-    */
-//} 
-
-
 void util_sleep(uint32_t msec){
     uint32_t i;
     for(i=0;i<(100000*msec);i++){
     }
 }
 
+void main00(void){
+    uint32_t i=0;
+    uint8_t str[]="\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+    while(true){
+//        uart0_send("--> main00 ");
+//        uint_to_string(i,BIN,16,str);
+//        uart0_send(str);
+//        uart0_send("   -->\n");
+        util_sleep(100);
+        i++;
+    }
+}
 
 void main01(void){
+//    uint32_t i=0x10400;
+    uint32_t i=0x42;
+    UTF8Encode des;
+    uint8_t str[]="\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
     while(true){
-        uart0_send("main01 send message to UART\n");
-        util_sleep(100);
+        uart0_send("-->--> main01 ");
+        des=utf8_encode(i);
+        uint_to_string(i,HEX,16,str);
+        uart0_send(str);
+        uart0_send("  |  ");
+        send_message(des.bytes,des.count); 
+        uart0_send("   -->\n");
+        util_sleep(200);
+        i++;
     }
 }
 
 void main02(void){
     while(true){
-        uart0_send("main02 send message to UART\n");
-        util_sleep(100);
+//        uart0_send("-->-->--> main02 \n");
+        util_sleep(300);
     }
 }
 
 void main03(void){
     while(true){
-        uart0_send("main03 send message to UART\n");
-        util_sleep(100);
+//        uart0_send("-->-->-->--> main03 \n");
+        util_sleep(400);
     }
 }
 
-int main00(void){
-    char message[]=      "New Hello World! \n";
-    char string_buffer[]="------------";
-    uint32_t i=0;
-    uint32_t counter=0x10405; 
-    send_message(message,18);
-    UTF8Encode utf8Test;
-    while(1){
-        uart0_send("Begin character");
-        utf8Test=utf8_encode(counter);
-        for(i=0;i<utf8Test.count;i++){
-            uint8_to_hexstring(utf8Test.bytes[i],string_buffer);
-            uart0_send(" ");
-            uart0_send(string_buffer);
-            uart0_send(" ");
-        }
-        uart0_send(" ");
-        send_message(utf8Test.bytes,utf8Test.count);
-        uart0_send(" ");
-        uint32_to_hexstring(counter,string_buffer);
-        uart0_send(string_buffer);
-        uart0_send(" end of line \n");
-        counter++;
-        util_sleep(100);
-    }
-}
 
 
 //uint8_t utf8Test[]="€";

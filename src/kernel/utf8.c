@@ -15,16 +15,16 @@ typedef enum {
     CP2      =1,       //start of a two byte codepoint
     CP3      =2,       //start of a three byte codepoint
     CP4      =3,       //start of a four byte codepoint
-}UTF8TokenType;
+}UTF8_ByteType;
 
 typedef struct{
-    UTF8TokenType type;
+    UTF8_ByteType type;
     uint32_t value;    
-}UTF8Token;
+}UTF8_Byte;
 
 //private function to identify the utf8 token type and parse the token value
-UTF8Token process_token(uint8_t byte){
-    UTF8Token res;
+UTF8_Byte process_byte(uint8_t byte){
+    UTF8_Byte res;
     if((byte&0x80)     ==0x00){        //test most significant 1 bits  
         res.value=(uint32_t)byte;      //0b0xxxxxxx is a one byte encoding
         res.type=CP1;
@@ -50,37 +50,37 @@ UTF8Token process_token(uint8_t byte){
 
 UTF8Decode utf8_decode(uint8_t *byteArray){
     UTF8Decode res;
-    UTF8Token token=process_token(*byteArray);
+    UTF8_Byte byte=process_byte(*byteArray);
     res.count=1;
-    res.code=token.value;
-    if(token.type>0){
-        int8_t count_required=token.type;
+    res.code=byte.value;
+    if(byte.type>0){
+        int8_t count_required=byte.type;
         while(count_required){
             byteArray++;
-            token=process_token(*byteArray);
-            if(token.type==CONTINUE){
-                res.code=(res.code<<6)+(uint32_t)token.value;
+            byte=process_byte(*byteArray);
+            if(byte.type==CONTINUE){
+                res.code=(res.code<<6)+(uint32_t)byte.value;
                 res.count++;
                 count_required--;
             }
-            else if(token.type==INVALID){
+            else if(byte.type==INVALID){
                res.code=0x00FFFD;
                res.status=INVALID_BYTE;
                break;
             }
             //subtle fall through logic here.
-            else if(token.type!=CONTINUE){
+            else if(byte.type!=CONTINUE){
                res.code=0x00FFFD;
                res.status=EXPECTED_CONTINUE;
                break;
             }
         }
     }
-    else if(token.type==INVALID){
+    else if(byte.type==INVALID){
         res.code=0xFFFD;
         res.status=INVALID_BYTE;
     }
-    else if(token.type==CONTINUE){
+    else if(byte.type==CONTINUE){
         res.code=0xFFFD;
         res.status=UNEXPECTED_CONTINUE;
     }

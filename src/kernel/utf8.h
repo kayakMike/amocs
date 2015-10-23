@@ -34,4 +34,3 @@ UTF8Encode utf8_encode(uint32_t codepoint);
 #endif //__UTF8_H
 
 
-
