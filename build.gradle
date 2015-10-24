@@ -25,6 +25,11 @@ model {
                     args << "-T" << "stm32f205.ld"
                 }
             }
+            target("lpc1769"){
+                linker.withArguments{args->
+                    args << "-T" << "lpc1769.ld"
+                }
+            }
         }
     }
 
@@ -35,9 +40,11 @@ model {
         netduino2 {
             architecture "arm"
         }
+        lpc1769 {
+            architecture "arm"
+        }
         
     }
-
     components {
         stellaris(NativeExecutableSpec) {
             targetPlatform "stellaris"
@@ -54,6 +61,7 @@ model {
                 }
             }
         }
+
         netduino2(NativeExecutableSpec) {
             targetPlatform "netduino2"
             sources {
@@ -69,9 +77,23 @@ model {
                 }
             }
         }
+
+        lpc1769(NativeExecutableSpec) {
+            targetPlatform "lpc1769"
+            sources {
+                c {
+                    source {
+                        srcDirs "src/kernel", "src/lpc1769"
+                        include "**/*.c", "**/*.h"
+                    }
+                    exportedHeaders {
+                        srcDir "src/kernel"
+                        include "**/*.h"
+                    }
+                }
+            }
+        }
     }
-
-
 }
 
 task emulateNetduino2(type: Exec){

@@ -1,5 +1,5 @@
 #include "micro_types.h"
-
+#include "system.h"
 
 volatile uint32_t proc[4];
 volatile uint32_t proc_index=0;
@@ -155,6 +155,8 @@ void sysinit_stacks(void){
 
 void Reset_Handler(void){
     sysinit_memory();
+    system_clock_initialize();
+    gpio_setup();
 //    sysinit_SysTick();
 //    sysinit_stacks();
     main01();

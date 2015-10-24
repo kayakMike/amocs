@@ -1,5 +1,5 @@
 #include "micro_types.h"
-#include "uart0.h"
+#include "system.h"
 #include "utf8.h"
 #include "string.h"
 
