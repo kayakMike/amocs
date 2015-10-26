@@ -132,13 +132,11 @@ void exit(void){
 }
 
 void init_stack(uint32_t bot, uint32_t entry){
-
     uint32_t *stack=(uint32_t *)bot;
     stack[16]=0x01000000;
     stack[15]=(uint32_t)entry;
     stack[14]=(uint32_t)exit;
     stack[ 8]=0xFFFFFFF9;
-    
 }
 
 
@@ -157,9 +155,10 @@ void Reset_Handler(void){
     sysinit_memory();
     system_clock_initialize();
     gpio_setup();
+    uart0_initialize();
 //    sysinit_SysTick();
 //    sysinit_stacks();
-    main01();
+    main02();
 } 
 
 void SysTick_Handler(void){

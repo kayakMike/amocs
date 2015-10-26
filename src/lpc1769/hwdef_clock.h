@@ -59,5 +59,46 @@ typedef struct{
 }CoreClockOutput;
 #define CORE_CLOCK_OUTPUT (*(volatile CoreClockOutput *)(0x400FC014))
 
+typedef struct{
+    unsigned wdt        : 2;
+    unsigned timer0     : 2;
+    unsigned timer1     : 2;
+    unsigned uart0      : 2;
+    unsigned uart1      : 2;
+    unsigned            : 2;
+    unsigned pwm1       : 2;
+    unsigned i2c0       : 2;
+    unsigned spi        : 2;
+    unsigned            : 2;
+    unsigned spp1       : 2;
+    unsigned dac        : 2;
+    unsigned adc        : 2;
+    unsigned can1       : 2;
+    unsigned can2       : 2;
+    unsigned acf        : 2;
+}PeripheralClock0;
+
+#define PERIPHERAL_CLOCK_SEL0 (*(volatile PeripheralClock0 *)(0x400FC1A8))
+
+typedef struct{
+    unsigned qei        : 2;
+    unsigned gpioint    : 2;
+    unsigned pcb        : 2;
+    unsigned i2c1       : 2;
+    unsigned            : 2;
+    unsigned ssp0       : 2;
+    unsigned timer2     : 2;
+    unsigned timer3     : 2;
+    unsigned uart2      : 2;
+    unsigned uart3      : 2;
+    unsigned i2c2       : 2;
+    unsigned i2s        : 2;
+    unsigned            : 2;
+    unsigned rit        : 2;
+    unsigned syscon     : 2;
+    unsigned mctl       : 2;
+}PeripheralClock1;
+
+#define PERIPHERAL_CLOCK_SEL1 (*(volatile PeripherealClock1 *)(0x400FC1AC))
 
 #endif //__HWDEF_CLOCK_H

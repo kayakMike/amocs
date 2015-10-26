@@ -7,7 +7,7 @@
 
 void util_sleep(uint32_t msec){
     uint32_t i;
-    for(i=0;i<(100000*msec);i++){
+    for(i=0;i<(10000*msec);i++){
     }
 }
 
@@ -15,18 +15,12 @@ void main00(void){
     uint32_t i=0;
     uint8_t str[]="\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
     while(true){
-//        uart0_send("--> main00 ");
-//        uint_to_string(i,BIN,16,str);
-//        uart0_send(str);
-//        uart0_send("   -->\n");
         util_sleep(100);
         i++;
     }
-
 }
 
 void main01(void){
-//    uint32_t i=0x10400;
     uint32_t i=0x42;
     UTF8Encode des;
     uint8_t str[]="\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
@@ -45,14 +39,14 @@ void main01(void){
 
 void main02(void){
     while(true){
-//        uart0_send("main02 send message to UART\n");
-        util_sleep(100);
+        gpio_toggle();
+//        uart0_send("Hello World!!!\n");
+        util_sleep(200);
     }
 }
 
 void main03(void){
     while(true){
-//        uart0_send("-->-->-->--> main03 \n");
         util_sleep(400);
     }
 }
@@ -79,24 +73,4 @@ uint32_t initializeStack(uint32_t origin, uint32_t entryFunction){
     stack[8]=0xFFFFFFF9;                //execReturn
     //   r11-4           --> index-8=0
     return (uint32_t)stack;
-}
-
-    uint32_t r0;
-    uint32_t r1;
-    uint32_t r2;
-    uint32_t r3;
-    uint32_t r4;
-    uint32_t r5;
-    uint32_t r6;
-    uint32_t r7;
-    uint32_t r8;
-    uint32_t r9;
-    uint32_t r10;
-    uint32_t r11;
-    uint32_t r12;
-    uint32_t SP;
-    uint32_t LR;
-    uint32_t PC;
-    uint32_t xPSR;
 */
-
