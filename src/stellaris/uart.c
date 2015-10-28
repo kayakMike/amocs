@@ -1,5 +1,5 @@
 #include "micro_types.h"
-#include "uart0.h"
+#include "system.h"
 //for Stellaris
 #define UART0_DATA    (*(volatile uint32_t *)(0x4000C000))
 #define UART0_FLAG    (*(volatile uint32_t *)(0x4000C018))

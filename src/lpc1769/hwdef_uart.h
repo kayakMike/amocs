@@ -9,20 +9,20 @@ typedef struct{
     unsigned           :24;
 }UartTranscieveBuffer;
 //set appropriate divisor_latch to 0 
-#define UART0_RBR   (*(volatile UartTranscieveBuffer *)(0x400C0000))
+#define UART0_RBR   (*(volatile UartTranscieveBuffer *)(0x4000C000))
 #define UART2_RBR   (*(volatile UartTranscieveBuffer *)(0x40098000))
 #define UART3_RBR   (*(volatile UartTranscieveBuffer *)(0x4009C000))
 
-#define UART0_THR   (*(volatile UartTranscieveBuffer *)(0x400C0000))
+#define UART0_THR   (*(volatile UartTranscieveBuffer *)(0x4000C000))
 #define UART2_THR   (*(volatile UartTranscieveBuffer *)(0x40098000))
 #define UART3_THR   (*(volatile UartTranscieveBuffer *)(0x4009C000))
 //set UART divisor_latch to 1 first
-#define UART0_DLL   (*(volatile UartTranscieveBuffer *)(0x400C0000))
+#define UART0_DLL   (*(volatile UartTranscieveBuffer *)(0x4000C000))
 #define UART2_DLL   (*(volatile UartTranscieveBuffer *)(0x40098000))
 #define UART3_DLL   (*(volatile UartTranscieveBuffer *)(0x4009C000))
 
 //
-#define UART0_DLM   (*(volatile UartTranscieveBuffer *)(0x400C0004))
+#define UART0_DLM   (*(volatile UartTranscieveBuffer *)(0x4000C004))
 #define UART2_DLM   (*(volatile UartTranscieveBuffer *)(0x40098004))
 #define UART3_DLM   (*(volatile UartTranscieveBuffer *)(0x4009C004))
 

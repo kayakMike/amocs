@@ -106,3 +106,45 @@ task emulateStellaris(type: Exec){
     args  '-machine', 'lm3s6965evb', '-cpu', 'cortex-m3', '-kernel', 'build/binaries/stellarisExecutable/stellaris', '-nographic', '-s'
 }
 
+task lpc1769Hex(type: Exec){
+    commandLine '/opt/x-tools/arm-unknown-eabi/bin/arm-unknown-eabi-objcopy'
+    args '-O', 'ihex', '--strip-debug', 'build/binaries/lpc1769Executable/lpc1769', 'lpc1769.hex'
+}
+
+task lpc1769Binary(type: Exec){
+    commandLine '/opt/x-tools/arm-unknown-eabi/bin/arm-unknown-eabi-objcopy'
+    args '-O', 'binary', '--strip-debug', 'build/binaries/lpc1769Executable/lpc1769', 'lpc1769.bin'
+}
+
+task stellarisBinary(type: Exec){
+    commandLine '/opt/x-tools/arm-unknown-eabi/bin/arm-unknown-eabi-objcopy'
+    args '-O', 'binary', '--strip-debug', 'build/binaries/stellarisExecutable/stellaris', 'stellaris.bin'
+}
+
+/*
+task createMapFile(type: Exec, dependsOn: 'snarfExecutable'){
+    workingDir 'build/binaries/snarfExecutable'
+    executable '/home/base/x-tools/arm-unknown-eabi/bin/arm-unknown-eabi-nm'
+    args  '-f', 'sysv', 'snarf', '-n', '-l'
+
+    standardOutput = new FileOutputStream("${project.name}.map")
+
+}
+
+task createHexFile(type: Exec, dependsOn: 'createMapFile'){
+    workingDir 'build/binaries/snarfExecutable'
+    commandLine '/home/base/x-tools/arm-unknown-eabi/bin/arm-unknown-eabi-objcopy'
+    args '-O', 'ihex', '--strip-debug', 'snarf', 'lpc4337.hex'
+}
+
+task loadHexFile(type: Exec, dependsOn: 'createHexFile'){
+    workingDir 'build/binaries/snarfExecutable'
+    executable '/usr/bin/lpc21isp' 
+    args  'lpc4337.hex', '/dev/ttyS2', '115200', '14746'
+}
+
+task startTerminal(type: Exec){
+    executable '/usr/bin/lpc21isp'
+    args  '-termonly', '/dev/ttyS2', '115200', '14746'
+}
+*/

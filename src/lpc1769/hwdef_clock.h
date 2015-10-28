@@ -19,17 +19,17 @@ typedef struct{
 #define PLL0_CTL (*(volatile PLL0Control *)(0x400FC080))
 
 typedef struct{
-   unsigned m          :15;
+   unsigned msel       :15;
    unsigned            : 1;
-   unsigned n          : 8;
+   unsigned nsel       : 8;
    unsigned            : 8;
 }PLL0Config;
 #define PLL0_CONFIG (*(volatile PLL0Config *)(0x400FC084))
 
 typedef struct{
-   unsigned m          :15;
+   unsigned msel       :15;
    unsigned            : 1;
-   unsigned n          : 8;
+   unsigned nsel       : 8;
    unsigned enabled    : 1;
    unsigned connected  : 1;
    unsigned locked     : 1;

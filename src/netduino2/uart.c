@@ -1,5 +1,5 @@
 #include "micro_types.h"
-#include "uart0.h"
+#include "system.h"
 //for Netduino USART1:  0x4001 1000 - 0x4001 13FF
 #define USART1_DATA    (*(uint32_t *)(0x40011004))
 #define USART1_FLAG    (*(uint32_t *)(0x40011000))

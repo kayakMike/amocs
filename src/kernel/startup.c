@@ -153,7 +153,7 @@ void sysinit_stacks(void){
 
 void Reset_Handler(void){
     sysinit_memory();
-    system_clock_initialize();
+//    system_clock_initialize();
     gpio_setup();
     uart0_initialize();
 //    sysinit_SysTick();
