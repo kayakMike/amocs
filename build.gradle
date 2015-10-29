@@ -1,15 +1,16 @@
 apply plugin: 'c'
 
 
+
 model {
     toolChains {
         gcc(Gcc) {
-            path "/opt/x-tools/arm-unknown-eabi/bin"
+            path "/opt/x-tools/arm-none-eabi/bin"
             eachPlatform{tools->
-                tools.linker.executable            "arm-unknown-eabi-ld"
-                tools.cCompiler.executable         "arm-unknown-eabi-gcc"
-                tools.assembler.executable         "arm-unknown-eabi-as"
-                tools.staticLibArchiver.executable "arm-unknown-eabi-ar"
+                tools.linker.executable            "arm-none-eabi-ld"
+                tools.cCompiler.executable         "arm-none-eabi-gcc"
+                tools.assembler.executable         "arm-none-eabi-as"
+                tools.staticLibArchiver.executable "arm-none-eabi-ar"
                 cCompiler.withArguments{args->
                     args << "-g" 
                     args << "-fno-builtin"
@@ -107,33 +108,89 @@ task emulateStellaris(type: Exec){
 }
 
 task lpc1769Hex(type: Exec){
-    commandLine '/opt/x-tools/arm-unknown-eabi/bin/arm-unknown-eabi-objcopy'
+    commandLine '/opt/x-tools/arm-none-eabi/bin/arm-none-eabi-objcopy'
     args '-O', 'ihex', '--strip-debug', 'build/binaries/lpc1769Executable/lpc1769', 'lpc1769.hex'
 }
 
 task lpc1769Binary(type: Exec){
-    commandLine '/opt/x-tools/arm-unknown-eabi/bin/arm-unknown-eabi-objcopy'
+    commandLine '/opt/x-tools/arm-none-eabi/bin/arm-none-eabi-objcopy'
     args '-O', 'binary', '--strip-debug', 'build/binaries/lpc1769Executable/lpc1769', 'lpc1769.bin'
 }
 
 task stellarisBinary(type: Exec){
-    commandLine '/opt/x-tools/arm-unknown-eabi/bin/arm-unknown-eabi-objcopy'
+    commandLine '/opt/x-tools/arm-none-eabi/bin/arm-none-eabi-objcopy'
     args '-O', 'binary', '--strip-debug', 'build/binaries/stellarisExecutable/stellaris', 'stellaris.bin'
 }
+
+
+task lpc1769CreateHex(type: Exec, dependsOn: 'lpc1769Executable'){
+    workingDir 'build/binaries/lpc1769Executable'
+    commandLine '/opt/x-tools/arm-none-eabi/bin/arm-none-eabi-objcopy'
+    args '-O', 'ihex', '--strip-debug', 'lpc1769', 'lpc1769.hex'
+}
+
+task lpc1769StartISP(dependsOn: 'lpc1769CreateHex'){
+
+    
+    doLast {
+        File reset=new File("/sys/class/gpio/gpio19/value")
+        File isp=new File("/sys/class/gpio/gpio24/value")
+        isp.write("0")
+        reset.write("0")
+        sleep(500)
+        reset.write("1")
+   }
+}
+
+task lpc1769Load(type: Exec, dependsOn: 'lpc1769CreateHex'){
+    workingDir 'build/binaries/lpc1769Executable'
+    executable '/opt/x-tools/lpc21isp' 
+    args  'lpc1769.hex', '/dev/ttySAC0', '115200', '14746'
+
+    doFirst {
+        File reset=new File("/sys/class/gpio/gpio19/value")
+        File isp=new File("/sys/class/gpio/gpio24/value")
+        isp.write("0")
+        reset.write("0")
+//        sleep(500)
+        reset.write("1")
+    }
+    
+    doLast {
+        File reset=new File("/sys/class/gpio/gpio19/value")
+        File isp=new File("/sys/class/gpio/gpio24/value")
+        reset.write('0')
+//        sleep(500)
+        isp.write('1')
+        reset.write('1')
+    }
+
+
+}
+
+task lpc1769StartProgram(type: Exec, dependsOn: 'lpc1769Load'){
+    doLast {
+        File reset=new File("/sys/class/gpio/gpio19/value")
+        File isp=new File("/sys/class/gpio/gpio19/value")
+        reset.write('0')
+        sleep(400)
+        isp.write('1')
+        reset.write('1')
+   }
+}
+
 
 /*
 task createMapFile(type: Exec, dependsOn: 'snarfExecutable'){
     workingDir 'build/binaries/snarfExecutable'
-    executable '/home/base/x-tools/arm-unknown-eabi/bin/arm-unknown-eabi-nm'
+    executable '/home/base/x-tools/arm-none-eabi/bin/arm-none-eabi-nm'
     args  '-f', 'sysv', 'snarf', '-n', '-l'
-
     standardOutput = new FileOutputStream("${project.name}.map")
-
 }
 
 task createHexFile(type: Exec, dependsOn: 'createMapFile'){
     workingDir 'build/binaries/snarfExecutable'
-    commandLine '/home/base/x-tools/arm-unknown-eabi/bin/arm-unknown-eabi-objcopy'
+    commandLine '/home/base/x-tools/arm-none-eabi/bin/arm-none-eabi-objcopy'
     args '-O', 'ihex', '--strip-debug', 'snarf', 'lpc4337.hex'
 }
 
@@ -147,4 +204,24 @@ task startTerminal(type: Exec){
     executable '/usr/bin/lpc21isp'
     args  '-termonly', '/dev/ttyS2', '115200', '14746'
 }
+*/
+
+
+
+/*make this into an init script to be run on boot
+task odroidXU4(){
+    File gpioExport=new File("/sys/class/gpio/export")
+    gpioExport.write("19")
+    File resetDir   = new File("sys/class/gpio/gpio19/direction")
+    File resetValue = new File("sys/class/gpio/gpio19/value")
+    gpioResetDir.write("out")
+    gpioResetValue.write("0")
+    gpioExport.write("24")
+    File ispDir   = new File("sys/class/gpio/gpio24/direction")
+    File ispValue = new File("sys/class/gpio/gpio24/value")
+    ispDir.write("out")
+    ispValue.write("1")
+}
+
+
 */

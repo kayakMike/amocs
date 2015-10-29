@@ -3,6 +3,7 @@
 #include "utf8.h"
 #include "string.h"
 #include "crc.h"
+#include "neopixel.h"
 
 uint16_t crcTable[256];
 uint8_t crc7Table[256];
@@ -135,13 +136,14 @@ void main01(void){
 }
 
 void main02(void){
+    util_sleep(10);
     while(true){
 //      gpio_toggle();
 //      uart0_send("Hello World!!!\n");
         crc16_init();
         crc7_init();
         dump_crc7Table();
-//        dump_crcTable();
+//      dump_crcTable();
 
         uint8_t str[]="\0\0\0\0\0\0\0\0\0\0\0";
         uint8_t msg[]="Great Googly moggly!!!";
@@ -154,6 +156,7 @@ void main02(void){
             uart0_send(str);
             uart0_send(" ");
         }
+
         //uint16_t crc=crc_compute_ccitt(0xFFFF,msg,12);
         uart0_send("\n-----------------------------\n");
         uart0_send("String is ");
@@ -167,29 +170,32 @@ void main02(void){
         uart0_send("crc7 : ");
         uart0_send(str);
         uart0_send("\n");
-        util_sleep(20000);
     }
 }
 
 void main03(void){
+
+ //   neopix_startDemo();
+
     while(true){
         gpio_toggle();
-        uart0_send("HELLO WORLD ");
-        util_sleep(1);
-        uart0_send(" YAH!!!! HELLO WORLD ");
+        uart0_send("NEOPIXEL TEST! ");
+//        neopix_computeFrame();
+        util_sleep(10);
     }
 }
 
 
 //48 65 6C 6C 6F 20 57 6F 72 6C 64 00
-//uint8_t utf8Test[]="€";
+//uint8_t utf8Test[]=""€;
 //uint8_t utf8Test[]={0xc3,0xaf,0x00};
 //uint8_t utf8Test[]={0xc3,0xb0,0x00};  //LATIN SMALL LETTER ETH
 //uint8_t utf8Test[]={0xc3,0xb1,0x00};  //LATIN SMALL LETTER N WITH TILDE
 //uint8_t utf8Test[]={0xf0,0x90,0x90,0x81}; // DESERET LONG O 𐐅
-//uint8_t utf8Test[]="~"i𐐁𐐁𐐁 𐌰𐌰𐌡𐌡𐌀𐌀𐇡𐇡𐆗𐆗𐆠𐆠𐊀𐊀𐊺𐊺𐋈𐋈𐐁𐐅𐐅;
+//uint8_t utf8Test[]="~"i𐐁𐐁𐐁 𐌰𐌰𐌡𐌡𐌀𐌀𐇡𐇡𐆗𐆗𐆠𐆠𐊀𐊀𐊺𐊺𐋈𐋈𐐁𐐅;
 //uint8_t utf8Test[]="₠";
 
+    //    uart0_send("HELL𐐅 W𐐅RLD! €€€€");
 
 /*
  *  48 65 6C 6C 6F 20 57 6F 72 6C 64

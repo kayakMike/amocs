@@ -1,5 +1,6 @@
 #include "micro_types.h"
 #include "system.h"
+#include "neopixel.h"
 
 volatile uint32_t proc[4];
 volatile uint32_t proc_index=0;
@@ -35,12 +36,13 @@ void SVC_Handler             (void);
 void DebugMon_Handler        (void);
 void PendSV_Handler          (void);
 void SysTick_Handler         (void) __attribute__ ((interrupt,naked));
+void WatchDog_Handler        (void);
 
 
 void (*vectors[68])(void) __attribute__ ((section(".vectors")))={
     (void *)&_stack_init,
-    Reset_Handler,
-    NMI_Handler,
+    Reset_Handler,            //1
+    NMI_Handler,              //2
     HardFault_Handler,
     MemManage_Handler,  
     BusFault_Handler,   
@@ -53,7 +55,9 @@ void (*vectors[68])(void) __attribute__ ((section(".vectors")))={
     DebugMon_Handler,   
     0,                  
     PendSV_Handler,     
-    SysTick_Handler
+    SysTick_Handler,
+    WatchDog_Handler,
+    Timer0_Handler
 };
 
 
@@ -156,9 +160,10 @@ void Reset_Handler(void){
 //    system_clock_initialize();
     gpio_setup();
     uart0_initialize();
+    neopix_initializeDemo();
 //    sysinit_SysTick();
 //    sysinit_stacks();
-    main02();
+    main03();
 } 
 
 void SysTick_Handler(void){
@@ -199,4 +204,6 @@ void UsageFault_Handler      (void){};
 void SVC_Handler             (void){};
 void DebugMon_Handler        (void){};
 void PendSV_Handler          (void){};
+void WatchDog_Handler        (void){};
+
 //void SysTick_Handler         (void){};

@@ -1,0 +1,60 @@
+#!/bin/bash
+# sets up the relevant GPIOs and UART0 connection so all users on the odroid
+# can build and deploy to the lpc1769 after boot
+# intended to be a boot script
+
+
+start (){
+    echo "19" > /sys/class/gpio/export
+    echo "24" > /sys/class/gpio/export
+    
+    echo "out" > /sys/class/gpio/gpio19/direction
+    echo "out" > /sys/class/gpio/gpio24/direction
+
+    echo "1" > /sys/class/gpio/gpio19/value
+    echo "1" > /sys/class/gpio/gpio24/value
+
+    chmod 666 /sys/class/gpio/gpio19/value
+    chmod 666 /sys/class/gpio/gpio24/value
+
+    chmod 666 /dev/ttySAC0
+}
+
+stop (){
+    echo "19" > /sys/class/gpio/unexport
+    echo "24" > /sys/class/gpio/unexport
+}
+
+reload (){
+   echo "not implemented"
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        stop
+        start
+        ;;
+    reload)
+        reload
+        ;;
+    condrestart)
+        if [ -f /var/lock/subsys/$prog ] ; then
+            stop
+            # avoid race
+            sleep 3
+            start
+        fi
+        ;;
+    *)  (10)
+        echo $"Usage: $0 {start|stop|restart|reload|condrestart}"
+        RETVAL=1
+esac
+exit $RETVAL
+
+

@@ -14,4 +14,8 @@ void gpio_setup(void);
 void gpio_on(void);
 void gpio_off(void);
 
+void Timer0_Handler(void);
+
+
+
 #endif //__SYSTEM_H
