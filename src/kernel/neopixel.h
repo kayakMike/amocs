@@ -4,7 +4,7 @@
 #include "micro_types.h"
 
 
-void Timer0_Handler(void);
+void neoTimer0_Handler(void);
 /**
  *  @brief: initializes the necessary neopixel structures and libraries
  *  Neopixel uses the lpc timers to implement a non-return to zero serial

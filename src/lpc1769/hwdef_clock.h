@@ -17,6 +17,7 @@ typedef struct{
    unsigned            :30;
 }PLL0Control;
 #define PLL0_CTL (*(volatile PLL0Control *)(0x400FC080))
+#define PLL0_CTL_VALUE (*(volatile uint32_t *)(0x400FC080))
 
 typedef struct{
    unsigned msel       :15;
@@ -57,7 +58,7 @@ typedef struct{
    unsigned divider   : 8;
    unsigned           :24;
 }CoreClockOutput;
-#define CORE_CLOCK_OUTPUT (*(volatile CoreClockOutput *)(0x400FC014))
+#define CORE_CLOCK_OUTPUT (*(volatile CoreClockOutput *)(0x400FC104))
 
 typedef struct{
     unsigned wdt        : 2;

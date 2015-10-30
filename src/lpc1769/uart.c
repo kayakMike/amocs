@@ -1,6 +1,6 @@
 #include "micro_types.h"
 #include "hwdef_gpio.h"
-#include "hwdef_pinsel.h"
+#include "hwdef_pinmx.h"
 #include "hwdef_uart.h"
 #include "hwdef_clock.h"
 
@@ -30,10 +30,10 @@ void send_message(uint8_t *message, uint32_t count){
 }
 
 void uart0_initialize(void){
-    PINSEL0.p002=1;
-    PINSEL0.p003=1;
-    PINMODE0.p002=2;  //pulldown
-    PINMODE0.p003=2;  //pulldown
+    PIN_FUNC.p0_02=1;
+    PIN_FUNC.p0_03=1;
+    PIN_MODE.p0_02=2;  //pulldown
+    PIN_MODE.p0_03=2;  //pulldown
 
     PERIPHERAL_CLOCK_SEL0.uart0=1;
     
@@ -49,14 +49,13 @@ void uart0_initialize(void){
     UART0_LINE_CTL.parity_enable=0;  //N
     UART0_LINE_CTL.stop_bits=0;      //1
 
-
-    //  These settings should work for IRC Reset.
     UART0_FRACTIONAL_DIVIDER.divaddval=1;
     UART0_FRACTIONAL_DIVIDER.mulval=2;
 
     UART0_LINE_CTL.divisor_latch=1;    //unlock divisors
     UART0_DLM.buffer=0;
-    UART0_DLL.buffer=17;
+//    UART0_DLL.buffer=17;
+    UART0_DLL.buffer=43;
     UART0_LINE_CTL.divisor_latch=0;    //relock divisors
     UART0_TRANSMIT_ENABLE.tx_enable=1;
 } 

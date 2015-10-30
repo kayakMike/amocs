@@ -1,5 +1,6 @@
 #include "crc.h"
 #include "string.h"
+#include "system.h"
 
 //uint16_t crc16_table[256];
 //CRC-7 polynomial x^7 + x^3 + 1

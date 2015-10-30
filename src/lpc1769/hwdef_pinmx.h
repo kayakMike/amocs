@@ -103,8 +103,8 @@ typedef struct{          //|FUNC0    FUNC1         FUNC2    FUNC3
     unsigned        : 2; //|        
     unsigned        :32; //| 0x20 reg8
     unsigned        :18; //| 0x24 reg9
-    unsigned p428   : 2; //|P4.28    RX_MCLK       MAT2.0 TXD3
-    unsigned p429   : 2; //|P4.29    TX_MCLK       MAT2.1 RXD3
+    unsigned p4_28  : 2; //|P4.28    RX_MCLK       MAT2.0 TXD3
+    unsigned p4_29  : 2; //|P4.29    TX_MCLK       MAT2.1 RXD3
     unsigned        :10; //|
     unsigned        : 2; //| 0x28 reg10
     unsigned trace  : 1; //|

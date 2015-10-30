@@ -6,7 +6,7 @@
 #include "neopixel.h"
 
 void util_sleep(uint32_t msec){
-    uint32_t i=400000*msec;
+    uint32_t i=12000000*msec;
     while(i--){
         //noop
     }
@@ -75,13 +75,13 @@ void main02(void){
 }
 
 void main03(void){
-
-//  neopix_startDemo();
+    
+   // neopix_startDemo();
     while(true){
         gpio_toggle();
         uart0_send("NEOPIXEL TEST! ");
-//        neopix_computeFrame();
-        util_sleep(10);
+    //    neopix_computeFrame();
+//        util_sleep(1);
     }
 }
 

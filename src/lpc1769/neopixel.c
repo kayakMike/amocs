@@ -8,10 +8,10 @@
 #define PIXEL_COUNT 4
 #define ARRAY_SIZE  (PIXEL_COUNT * 3)
 #define FRAME_SIZE  (PIXEL_COUNT * 3 * 8)
-#define NRZ_ONE     200000
-#define NRZ_ZERO    100000
-#define NRZ_PERIOD  300000
-#define REFRESH     4000000
+#define NRZ_ONE     200
+#define NRZ_ZERO    100
+#define NRZ_PERIOD  300
+#define REFRESH     10000
 
 //GLOBALS!!!
 uint8_t pixelData[ARRAY_SIZE];
@@ -21,7 +21,8 @@ uint32_t frameIndex=0;
 uint32_t frameReady=0;
 uint32_t change=0;
 
-void Timer0_Handler(void){
+void neoTimer0_Handler(void){
+    PORT1_CLR.pin27=1;
     //  void *id;
     //  format_printm(&id,"TimerHandler : Checking IN!");
     //  format_apply(id);
@@ -44,9 +45,13 @@ void neopix_initializeDemo(void){
     //set port 1_16 to T0_MATCH0 <---------this works!
     PIN_FUNC.p1_28=3;
     PIN_MODE.p1_28=2;
-   
-    PORT3_DIR.pin29=1; 
-    PORT3_SET.pin29=1;
+
+    PIN_FUNC.p1_27=0;
+    PIN_MODE.p1_27=2;
+    PORT1_DIR.pin27=1; 
+    PORT1_SET.pin27=1;
+//    PORT3_DIR.pin29=1; 
+//    PORT3_SET.pin29=1;
 
     uint32_t i;
     for(i=0;i<FRAME_SIZE;i++){
