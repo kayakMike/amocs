@@ -1,5 +1,6 @@
 #include "hwdef_clock.h"
 #include "hwdef_gpio.h"
+#include "hwdef_nvic.h"
 #include "system.h"
 
 static inline void main_pll_feed(void){
@@ -63,36 +64,37 @@ uint32_t system_core_clock(void){
 
 
 void gpio_setup(void){
-    FIO0DIR.pin20=1; //output 
-    FIO0DIR.pin0=1;  //output 
+    PORT0_DIR.pin20=1; //output 
+    PORT0_DIR.pin00=1;  //output 
 }
 
 void gpio_on(void){
-    FIO0SET.pin20=1;
-    FIO0SET.pin0=1;
+    PORT0_SET.pin20=1;
+    PORT0_SET.pin00=1;
 }
 
 void gpio_off(void){
-    FIO0CLR.pin20=1;
-    FIO0CLR.pin0=1;
+    PORT0_CLR.pin20=1;
+    PORT0_CLR.pin00=1;
 }
 
 void gpio_toggle(void){
     
-    if(FIO0VAL.pin0==1){
-        FIO0CLR.pin0=1;
+    if(PORT0_VAL.pin00==1){
+        PORT0_CLR.pin00=1;
     }
     else{
-        FIO0SET.pin0=1;
+        PORT0_SET.pin00=1;
     }
     ////////////////////
-    if(FIO0VAL.pin20==1){
-        FIO0CLR.pin20=1;
+    if(PORT0_VAL.pin20==1){
+        PORT0_CLR.pin20=1;
     }
     else{
-        FIO0SET.pin20=1;
+        PORT0_SET.pin20=1;
     }
 }
 
-
-
+void init_vtable(void){
+    NVIC_VECTOR_TABLE_VALUE=0x10000000;
+}

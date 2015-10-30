@@ -1,8 +1,6 @@
 #ifndef __HWDEF_PINSEL_H
 #define __HWDEF_PINSEL_H
 
-#include "hwdef_pinsel.h"
-
 typedef struct{
     unsigned p000  : 2;
     unsigned p001  : 2;

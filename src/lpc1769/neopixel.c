@@ -1,17 +1,17 @@
 #include "hwdef_timer.h"
 #include "hwdef_nvic.h"
-#include "hwdef_pinsel.h"
+#include "hwdef_pinmx.h"
 #include "neopixel.h"
 #include "hwdef_gpio.h"
 
 
-#define PIXEL_COUNT    4
+#define PIXEL_COUNT 4
 #define ARRAY_SIZE  (PIXEL_COUNT * 3)
 #define FRAME_SIZE  (PIXEL_COUNT * 3 * 8)
-#define NRZ_ONE    200000
-#define NRZ_ZERO   100000
-#define NRZ_PERIOD 300000
-#define REFRESH    4000000
+#define NRZ_ONE     200000
+#define NRZ_ZERO    100000
+#define NRZ_PERIOD  300000
+#define REFRESH     4000000
 
 //GLOBALS!!!
 uint8_t pixelData[ARRAY_SIZE];
@@ -33,22 +33,20 @@ void Timer0_Handler(void){
     TIMER0_MATCH0=frame[frameIndex];
     TIMER0_MATCH1=NRZ_PERIOD;
     frameIndex++;
-    if(frameIndex>=FRAME_SIZE){   //24
-        //wait a long time before the next refresh
+    if(frameIndex>=FRAME_SIZE){
         TIMER0_MATCH1=REFRESH;
         frameIndex=0;
         frameRecomputeFlag=1;
     }
-
 }
 
 void neopix_initializeDemo(void){
     //set port 1_16 to T0_MATCH0 <---------this works!
-    PINSEL3.p128=3;
-    PINMODE3.p128=2;
+    PIN_FUNC.p1_28=3;
+    PIN_MODE.p1_28=2;
    
-    FIO3DIR.pin29=1; 
-    FIO3SET.pin29=1;
+    PORT3_DIR.pin29=1; 
+    PORT3_SET.pin29=1;
 
     uint32_t i;
     for(i=0;i<FRAME_SIZE;i++){

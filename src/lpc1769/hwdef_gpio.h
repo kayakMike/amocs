@@ -2,16 +2,16 @@
 #define __HWDEF_GPIO_H
 
 typedef struct{
-    unsigned pin0    : 1;
-    unsigned pin1    : 1;
-    unsigned pin2    : 1;
-    unsigned pin3    : 1;
-    unsigned pin4    : 1;
-    unsigned pin5    : 1;
-    unsigned pin6    : 1;
-    unsigned pin7    : 1;
-    unsigned pin8    : 1;
-    unsigned pin9    : 1;
+    unsigned pin00   : 1;
+    unsigned pin01   : 1;
+    unsigned pin02   : 1;
+    unsigned pin03   : 1;
+    unsigned pin04   : 1;
+    unsigned pin05   : 1;
+    unsigned pin06   : 1;
+    unsigned pin07   : 1;
+    unsigned pin08   : 1;
+    unsigned pin09   : 1;
     unsigned pin10   : 1;
     unsigned pin11   : 1;
     unsigned pin12   : 1;
@@ -36,34 +36,34 @@ typedef struct{
     unsigned pin31   : 1;
 }GPIOPort;
 
-#define FIO0DIR (*(volatile GPIOPort *)(0x2009C000))
-#define FIO1DIR (*(volatile GPIOPort *)(0x2009C020))
-#define FIO2DIR (*(volatile GPIOPort *)(0x2009C040))
-#define FIO3DIR (*(volatile GPIOPort *)(0x2009C060))
-#define FIO4DIR (*(volatile GPIOPort *)(0x2009C080))
+#define PORT0_DIR (*(volatile GPIOPort *)(0x2009C000))
+#define PORT1_DIR (*(volatile GPIOPort *)(0x2009C020))
+#define PORT2_DIR (*(volatile GPIOPort *)(0x2009C040))
+#define PORT3_DIR (*(volatile GPIOPort *)(0x2009C060))
+#define PORT4_DIR (*(volatile GPIOPort *)(0x2009C080))
 
-#define FIO0SET (*(volatile GPIOPort *)(0x2009C018))
-#define FIO1SET (*(volatile GPIOPort *)(0x2009C038))
-#define FIO2SET (*(volatile GPIOPort *)(0x2009C058))
-#define FIO3SET (*(volatile GPIOPort *)(0x2009C078))
-#define FIO4SET (*(volatile GPIOPort *)(0x2009C098))
+#define PORT0_SET (*(volatile GPIOPort *)(0x2009C018))
+#define PORT1_SET (*(volatile GPIOPort *)(0x2009C038))
+#define PORT2_SET (*(volatile GPIOPort *)(0x2009C058))
+#define PORT3_SET (*(volatile GPIOPort *)(0x2009C078))
+#define PORT4_SET (*(volatile GPIOPort *)(0x2009C098))
 
-#define FIO0CLR (*(volatile GPIOPort *)(0x2009C01C))
-#define FIO1CLR (*(volatile GPIOPort *)(0x2009C03C))
-#define FIO2CLR (*(volatile GPIOPort *)(0x2009C05C))
-#define FIO3CLR (*(volatile GPIOPort *)(0x2009C07C))
-#define FIO4CLR (*(volatile GPIOPort *)(0x2009C09C))
+#define PORT0_CLR (*(volatile GPIOPort *)(0x2009C01C))
+#define PORT1_CLR (*(volatile GPIOPort *)(0x2009C03C))
+#define PORT2_CLR (*(volatile GPIOPort *)(0x2009C05C))
+#define PORT3_CLR (*(volatile GPIOPort *)(0x2009C07C))
+#define PORT4_CLR (*(volatile GPIOPort *)(0x2009C09C))
 
-#define FIO0VAL (*(volatile GPIOPort *)(0x2009C014))
-#define FIO1VAL (*(volatile GPIOPort *)(0x2009C034))
-#define FIO2VAL (*(volatile GPIOPort *)(0x2009C054))
-#define FIO3VAL (*(volatile GPIOPort *)(0x2009C074))
-#define FIO4VAL (*(volatile GPIOPort *)(0x2009C094))
+#define PORT0_VAL (*(volatile GPIOPort *)(0x2009C014))
+#define PORT1_VAL (*(volatile GPIOPort *)(0x2009C034))
+#define PORT2_VAL (*(volatile GPIOPort *)(0x2009C054))
+#define PORT3_VAL (*(volatile GPIOPort *)(0x2009C074))
+#define PORT4_VAL (*(volatile GPIOPort *)(0x2009C094))
 
-#define FIO0MSK (*(volatile GPIOPort *)(0x2009C010))
-#define FIO1MSK (*(volatile GPIOPort *)(0x2009C030))
-#define FIO2MSK (*(volatile GPIOPort *)(0x2009C050))
-#define FIO3MSK (*(volatile GPIOPort *)(0x2009C070))
-#define FIO4MSK (*(volatile GPIOPort *)(0x2009C090))
+#define PORT0_MSK (*(volatile GPIOPort *)(0x2009C010))
+#define PORT1_MSK (*(volatile GPIOPort *)(0x2009C030))
+#define PORT2_MSK (*(volatile GPIOPort *)(0x2009C050))
+#define PORT3_MSK (*(volatile GPIOPort *)(0x2009C070))
+#define PORT4_MSK (*(volatile GPIOPort *)(0x2009C090))
 
 #endif //__HWDEF_GPIO_H

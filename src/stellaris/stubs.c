@@ -13,3 +13,4 @@ void neopix_setPixelRgb(uint32_t pixIndex, uint8_t grn, uint8_t red, uint8_t blu
 void neopix_startDemo(void){}
 void neopix_changePixels(void){}
 void neopix_computeFrame(void){}
+void init_vtable(void){}

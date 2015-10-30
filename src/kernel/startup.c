@@ -157,13 +157,14 @@ void sysinit_stacks(void){
 
 void Reset_Handler(void){
     sysinit_memory();
+    init_vtable();
 //    system_clock_initialize();
     gpio_setup();
     uart0_initialize();
     neopix_initializeDemo();
 //    sysinit_SysTick();
 //    sysinit_stacks();
-    main03();
+    main02();
 } 
 
 void SysTick_Handler(void){

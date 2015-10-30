@@ -8,6 +8,7 @@ void send_message(uint8_t *message, uint32_t count);
 void uart0_initialize(void);
 
 void system_clock_initialize(void);
+void init_vtable(void);
 
 void gpio_toggle(void);
 void gpio_setup(void);

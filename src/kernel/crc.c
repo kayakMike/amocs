@@ -1,5 +1,5 @@
 #include "crc.h"
-
+#include "string.h"
 
 //uint16_t crc16_table[256];
 //CRC-7 polynomial x^7 + x^3 + 1
@@ -79,7 +79,7 @@ uint8_t crc_compute_crc7(uint8_t crc, uint8_t *data, uint32_t len){
         data++;
         len--;
     }
-    return crc;
+    return (crc>>1);
 }
 
 uint16_t crc_compute_ccitt(uint16_t crc, uint8_t *data, uint32_t len){
@@ -90,24 +90,105 @@ uint16_t crc_compute_ccitt(uint16_t crc, uint8_t *data, uint32_t len){
     }
     return crc;
 }
+
+
+uint16_t crcTable[256];
+uint8_t crc7Table[256];
+
+//good for CRC16 bit polys
+void crc16_init(void){
+    uint16_t res=0;
+    uint16_t div=0;
+    uint8_t i;
+    for(div=0;div<256;++div){
+        res=div<<8;
+        for(i=8;i>0;--i){
+            if(res&(0x8000)){
+                res=(res<<1)^0x1021;
+            }
+            else{
+                res=(res<<1);
+            }
+        }
+        crcTable[div]=res;
+    }
+}
+
+void crc7_init(void){
+    uint16_t res=0;
+    uint16_t div=0;
+    uint8_t i; 
+
+    for(div=0;div<256;++div){
+        if(div&0x80){
+            res=div^0x89;
+        }
+        else{
+            res=div;
+        }
+        for(i=8;i>0;--i){
+            res=res<<1;
+            if(res&0x80){
+                    res=res^0x89;
+            }
+        }
+        crc7Table[div]=res;
+    }
+}
+
+void dump_crc7Table(void){
+    uint32_t i,j;
+    uint8_t str[]="\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+    for(j=0;j<32;j++){
+        for(i=0;i<8;i++){
+            uint_to_string(crc7Table[i+(8*j)],HEX,1,str);
+            uart0_send("0x");
+            uart0_send(str);
+            uart0_send(", ");
+        }
+        uart0_send("\n");
+    }
+}
+
+void dump_crc16Table(void){
+    uint32_t i,j;
+    uint8_t str[]="\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+    for(j=0;j<32;j++){
+        for(i=0;i<8;i++){
+            uint_to_string(crcTable[i+(8*j)],HEX,2,str);
+            uart0_send("0x");
+            uart0_send(str);
+            uart0_send(", ");
+        }
+        uart0_send("\n");
+    }
+}
+
+uint16_t crc_ccitt(uint8_t *msg, uint32_t len){
+    uint16_t i;
+    uint16_t res=0;
+    while(len--){
+        i=*msg^(res>>8);
+        res=crcTable[i]^(res<<8);
+        msg++;
+    }
+    return res;
+}
+
+uint8_t crc7(uint8_t *msg, uint32_t len){
+    uint16_t i;
+    uint8_t res=0;
+    while(len--){
+        i=*msg^res;
+        res=crc7Table[i]^res;
+        msg++;
+    }
+    return res;
+}
+
+
+
 /*
-    while (len--)
-        crc = crc_ccitt_byte(crc, *buffer++);
-    return crc;
-
-
-        (crc >> 8) ^ crc16_table[(crc ^ data) & 0xff];
-
-        while (len--)
-            crc = crc16_byte(crc, *buffer++);
-        return crc;
-
-
-
-//(crc >> 8) ^ crc16_table[(crc ^ data) & 0xff];
-
-
-
 void generate_crc16_table(void){
     uint32_t CRCPoly=0x18005; 
     uint32_t i;
@@ -128,31 +209,6 @@ void generate_crc16_table(void){
     }
 }
 
-void generate_crc7_table(void){
-    uint8_t CRCPoly = 0x89; 
-    uint16_t i;
-    uint8_t j;
-
-    for (i = 0; i < 256; i++){
-        //TERNARY EQUIVALENT:
-        //crc7_table[i] = (i & 0x80) ? i ^ CRCPoly : i;
-        if(i&0x80){
-            crc7_table[i]=i^CRCPoly;
-        }
-        else{
-            crc7_table[i]=i;
-        }
-        //end TERNARY EQUIVALENT
-        for(j = 1; j < 8; j++){
-            crc7_table[i]=crc7_table[i]<<1;
-            if(crc7_table[i] & 0x80){
-                crc7_table[i]=crc7_table[i]^CRCPoly;
-            }
-        }
-        //seems that the crc table entry is always left shifted when used...
-        crc7_table[i]=crc7_table[i]<<1;
-    }
-}
 */
 
 
