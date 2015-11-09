@@ -117,7 +117,7 @@ void main03(void){
     RGBColor pix;
     
     while(true){
-//        gpio_toggle();
+        gpio_toggle();
 //        output_system_stats();
         util_sleep(1);
         pix=hsvtorgb(i+  0 ,255, 50);
