@@ -15,15 +15,17 @@ void uart0_send(char *msg){
     }    
 }
 
-
-
-void send_message(uint8_t *message, uint32_t count){
-    uint32_t index=0;
-    while(index<count){
-        while(UART0_FLAG & 0x0){
-            //spin until UART0 is not busy anymore
+//better
+void uart0_send_message(uint8_t *msg, uint32_t len){
+    while(len){
+        if(UART0_FLAG & 0x0){
+            UART0_DATA=*msg;
+            msg++;
+            len--;
         }
-        UART0_DATA=message[index];
-        index++;
     }
 }
+
+
+
+void uart0_initialize(void){}

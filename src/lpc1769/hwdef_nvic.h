@@ -46,10 +46,10 @@ typedef struct{            //exception  index
 
 
 #define NVIC_SET_ENABLE   (*(volatile InterruptVectorControl *)(0xE000E100))
-#define NVIC_CLEAR_ENABLE (*(volatile InterruptVectorControl *)(0xE000E180))
+#define NVIC_CLR_ENABLE   (*(volatile InterruptVectorControl *)(0xE000E180))
 
 #define NVIC_SET_PENDING   (*(volatile InterruptVectorControl *)(0xE000E200))
-#define NVIC_CLEAR_PENDING (*(volatile InterruptVectorControl *)(0xE000E280))
+#define NVIC_CLR_PENDING   (*(volatile InterruptVectorControl *)(0xE000E280))
 
 #define NVIC_ACTIVE  (*(volatile InterruptVectorControl *)(0xE000E300))
 

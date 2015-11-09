@@ -1,11 +1,13 @@
-#include "hwdef_clock.h"
-#include "hwdef_gpio.h"
-#include "hwdef_nvic.h"
 #include "system.h"
+#include "hwdef_clock.h"
+
+#define IRC_OSCILLATOR  4000000
+#define MAIN_OSCILLATOR 12000000
+#define RTC_OSCILLATOR  32768
 
 static inline void main_pll_feed(void){
-        PLL0_FEED.feed=0xAA;
-        PLL0_FEED.feed=0x55;
+    PLL0_FEED.feed=0xAA;
+    PLL0_FEED.feed=0x55;
 }
 
 /*
@@ -19,18 +21,21 @@ static inline void main_pll_feed(void){
  *     n=1     nsel=1
  *     div=3   divider=2
  */
-
 void system_clock_initialize(void){
+
+    //disconnect PLL0
     if(PLL0_STATUS.connected){
         PLL0_CTL.connect=0;
         main_pll_feed();
     }
-
+    
+    //enable PLL0
     if(PLL0_STATUS.enabled){
         PLL0_CTL.enable=0;
         main_pll_feed();
     }
 
+    //enable XTAL
     if(!XTAL_OSCILLATOR.enable){
         XTAL_OSCILLATOR.range=0;  //12MHz Crystal
         XTAL_OSCILLATOR.enable=1;
@@ -38,7 +43,7 @@ void system_clock_initialize(void){
     }
     CORE_CLOCK_OUTPUT.divider=2;
 
-    PLL0_SOURCE_SELECT.source=1;
+    PLL0_SELECT.source=1;
 
     PLL0_CONFIG.msel=14;
     main_pll_feed();
@@ -57,51 +62,30 @@ void system_clock_initialize(void){
     main_pll_feed();
 }
 
-
 uint32_t system_core_clock(void){
-    uint32_t fin=12000000;  //
-    uint32_t m=PLL0_STATUS.msel+1;
-    uint32_t n=PLL0_STATUS.nsel+1;
-    uint32_t div=CORE_CLOCK_OUTPUT.divider+1;
-    uint32_t system_core_clock=(2*m*fin)/(n*div);
-    return system_core_clock; 
-}
-
-
-
-void gpio_setup(void){
-    PORT0_DIR.pin20=1; //output 
-    PORT0_DIR.pin00=1;  //output 
-    PORT1_DIR.pin27=1;  //output 
-}
-
-void gpio_on(void){
-    PORT0_SET.pin20=1;
-    PORT0_SET.pin00=1;
-}
-
-void gpio_off(void){
-    PORT0_CLR.pin20=1;
-    PORT0_CLR.pin00=1;
-}
-
-void gpio_toggle(void){
-    
-    if(PORT0_VAL.pin00==1){
-        PORT0_CLR.pin00=1;
+    uint32_t clk_speed=0;
+    if(PLL0_STATUS.connected==1){
+        uint32_t m=PLL0_STATUS.msel+1;
+        uint32_t n=PLL0_STATUS.nsel+1;
+        uint32_t div=CORE_CLOCK_OUTPUT.divider+1;
+        switch(PLL0_SELECT.source){
+            case 0:
+                clk_speed=(2*m*IRC_OSCILLATOR)/(n*div);
+                break;
+            case 1:
+                clk_speed=(2*m*MAIN_OSCILLATOR)/(n*div);
+                break;
+            case 2:
+                clk_speed=(2*m*RTC_OSCILLATOR)/(n*div);
+                break;
+            default:
+                clk_speed=0;
+                break;
+        }
     }
     else{
-        PORT0_SET.pin00=1;
+        clk_speed=IRC_OSCILLATOR;
     }
-    ////////////////////
-    if(PORT0_VAL.pin20==1){
-        PORT0_CLR.pin20=1;
-    }
-    else{
-        PORT0_SET.pin20=1;
-    }
+    return clk_speed; 
 }
 
-void init_vtable(void){
-    NVIC_VECTOR_TABLE_VALUE=0x10000000;
-}

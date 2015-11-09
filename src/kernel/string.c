@@ -1,8 +1,38 @@
 #include "string.h"
 
 //  "０１２３４５６７８９ＡＢＣＤＥＦ"
+uint8_t symbols[]="0123456789ABCDEF";
 
+uint8_t uint_to_decimal_string(uint32_t in, uint8_t *out){
+    uint32_t div=1000000000;
+    uint32_t sym=0;
+    uint32_t i=0;
+    while(div>0){
+        sym=in/div;
+        in=in-(sym*div);  
+        out[i]=symbols[sym];
+        i++;
+        div=div/10;
+    }
+    out[i]='\0';
+    return i;
+}
 
+uint8_t uint_to_hex_string(uint32_t in, uint8_t *out){
+    uint32_t div=0x10000000;
+    uint32_t sym=0;
+    uint32_t i=0;
+    while(div>0){
+        sym=in/div;
+        in=in-(sym*div);  
+        out[i]=symbols[sym];
+        i++;
+        div=div/0x10;
+    }
+    out[i]='\0';
+    return i;
+}
+   
 uint8_t uint_to_string(uint32_t in, uint8_t base, uint8_t size, uint8_t *bytes){ 
     uint8_t symbols[]="0123456789ABCDEF";
     uint32_t div;

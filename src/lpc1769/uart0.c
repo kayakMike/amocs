@@ -6,7 +6,6 @@
 
 #include "system.h"
 
-
 //icky....
 void uart0_send(char *msg){
     uint32_t i;
@@ -19,16 +18,17 @@ void uart0_send(char *msg){
 }
 
 //better
-void send_message(uint8_t *message, uint32_t count){
-    uint32_t index=0;
-    while(index<count){
+void uart0_send_message(uint8_t *msg, uint32_t len){
+    while(len){
         if(UART0_LINE_STATUS.tx_hold_empty==1){
-            UART0_THR.buffer=message[index];
-            index++;
+            UART0_THR.buffer=*msg;
+            msg++;
+            len--;
         }
     }
 }
 
+//uart0 initialization for debug messages
 void uart0_initialize(void){
     PIN_FUNC.p0_02=1;
     PIN_FUNC.p0_03=1;
@@ -59,6 +59,8 @@ void uart0_initialize(void){
     UART0_LINE_CTL.divisor_latch=0;    //relock divisors
     UART0_TRANSMIT_ENABLE.tx_enable=1;
 } 
+
+
 
 
 //  ASSUMPTION: SYSTEM_CORE_CLOCK is 120MHz...

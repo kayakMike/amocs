@@ -9,7 +9,7 @@ typedef struct{
    //0 internal IRC, 1 main osc, 2 real time clock; 
    unsigned           :30;
 }PLL0SourceSelect;
-#define PLL0_SOURCE_SELECT (*(volatile PLL0SourceSelect *)(0x400FC10C))
+#define PLL0_SELECT (*(volatile PLL0SourceSelect *)(0x400FC10C))
 
 typedef struct{
    unsigned enable     : 1;

@@ -1,87 +1,148 @@
-#include "micro_types.h"
 #include "system.h"
-#include "utf8.h"
 #include "string.h"
-#include "crc.h"
-#include "neopixel.h"
 
 void util_sleep(uint32_t msec){
-    uint32_t i=12000000*msec;
+    uint32_t i=120000*msec;
     while(i--){
-        //noop
+        //noop??
     }
 }
 
 void main00(void){
-    uint32_t i=0;
     while(true){
-        util_sleep(100);
-        i++;
     }
 }
 
 void main01(void){
-    uint32_t i=0x42;
-    UTF8Encode des;
-    uint8_t str[]="\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
     while(true){
-        uart0_send("-->--> main01 ");
-        des=utf8_encode(i);
-        uint_to_string(i,HEX,16,str);
-        uart0_send(str);
-        uart0_send("  |  ");
-        send_message(des.bytes,des.count); 
-        uart0_send("   -->\n");
-        util_sleep(200);
-        i++;
     }
 }
 
 void main02(void){
     while(true){
-        crc16_init();
-        crc7_init();
-        dump_crc7Table();
-        uint8_t str[]="\0\0\0\0\0\0\0\0\0\0\0";
-        uint8_t msg[]="Hello Me Myself and I";
-        uart0_send(msg);
-        uart0_send("\n------------------\n");
-        uint8_t i;  
-        for(i=0;msg[i]!='\0';i++){
-            uint_to_string(msg[i],HEX,1,str);
-            uart0_send(str);
-            uart0_send(" ");
-        }
-        uart0_send("\n-----------------------------\n");
-        uart0_send("String is ");
-        uint_to_string(i,DECIMAL,1,str);
-        uart0_send(str);
-        uart0_send(" bytes long");
-        uart0_send("\n-----------------------------\n");
-        uint8_t crc7=crc_compute_crc7(0,msg,i);
-        uint_to_string(crc7,HEX,1,str);
-        uart0_send("crc7 :");
-        uart0_send(str);
-        uart0_send("\n");
-        uart0_send("\n-----------------------------\n");
-        uint16_t crc16=crc_ccitt(msg,i);
-        uint_to_string(crc16,HEX,2,str);
-        uart0_send("crc16 : ");
-        uart0_send(str);
-        uart0_send("\n");
-
-        util_sleep(10000);
     }
 }
 
+void output_system_stats(void){
+    uint32_t core_clock_speed=system_core_clock();
+    uint8_t str[]="\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+    uart0_send("BASIC SYSTEM STATS! \n\r");
+    uart0_send("    System CPU Clock:  ");
+    uint_to_decimal_string(core_clock_speed,str);
+    uart0_send(str);
+    uart0_send(" ");
+    uint_to_hex_string(core_clock_speed,str);
+    uart0_send(str);
+    uart0_send("\n\r");
+}
+
+typedef struct{
+    uint8_t red;
+    uint8_t grn;
+    uint8_t blu;
+}RGBColor;
+
+
+RGBColor hsvtorgb(uint8_t hue, uint8_t sat, uint8_t val){
+    uint8_t region, fpart, p, q, t;
+    RGBColor pix;
+    if(sat==0){
+        pix.red=val;
+        pix.grn=val;
+        pix.blu=val;
+    }
+    else{
+        /* make hue 0-5 */
+        region=hue/43;
+
+        /* find remainder part, make it from 0-255 */
+        fpart = (hue - (region * 43)) * 6;
+        /* calculate temp vars, doing integer multiplication */
+        p = (val*(255-sat))>> 8;
+        q = (val*(255-((sat*fpart)>>8)))>>8;
+        t = (val*(255-((sat*(255-fpart))>>8)))>>8;
+            
+        /* assign temp vars based on color cone region */
+        switch(region){
+            case 0:
+                pix.red=val;
+                pix.grn=t; 
+                pix.blu=p; 
+                break;
+            case 1:
+                pix.red=q;
+                pix.grn=val;
+                pix.blu=p;
+                break;
+            case 2:
+                pix.red=p;
+                pix.grn=val;
+                pix.blu=t;
+                break;
+            case 3:
+                pix.red=p;
+                pix.grn=q;
+                pix.blu=val;
+                break;
+            case 4:
+                pix.red=t;
+                pix.grn=p; 
+                pix.blu=val; 
+                break;
+            default:
+                pix.red=val; 
+                pix.grn=p; 
+                pix.blu=q; 
+                break;
+        }
+    }
+
+    return pix;
+}
+
+
+
 void main03(void){
+
+
+    util_sleep(2);
+    nrz0_enable();
+
+    uint8_t msg[15]={0x00,0x00,0x00, 
+                     0x00,0xFF,0x00, 
+                     0x00,0x00,0xFF, 
+                     0xFF,0x00,0xFF,
+                     0x00,0xFF,0xFF};
+    uint8_t i=0;
+    RGBColor pix;
     
-   // neopix_startDemo();
     while(true){
-        gpio_toggle();
-        uart0_send("NEOPIXEL TEST! ");
-    //    neopix_computeFrame();
-//        util_sleep(1);
+//        gpio_toggle();
+//        output_system_stats();
+        util_sleep(1);
+        pix=hsvtorgb(i+  0 ,255, 50);
+        msg[ 0]=pix.grn;
+        msg[ 1]=pix.red;
+        msg[ 2]=pix.blu;
+        pix=hsvtorgb(i+ 51,255, 50);
+        msg[ 3]=pix.grn;
+        msg[ 4]=pix.red;
+        msg[ 5]=pix.blu;
+        pix=hsvtorgb(i+102,255, 50);
+        msg[ 6]=pix.grn;
+        msg[ 7]=pix.red;
+        msg[ 8]=pix.blu;
+        pix=hsvtorgb(i+153,255, 50);
+        msg[ 9]=pix.grn;
+        msg[10]=pix.red;
+        msg[11]=pix.blu;
+        pix=hsvtorgb(i+204,255, 50);
+        msg[12]=pix.grn;
+        msg[13]=pix.red;
+        msg[14]=pix.blu;
+
+        nrz0_send_message(msg,15);
+        i++;
     }
 }
 
