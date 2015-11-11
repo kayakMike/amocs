@@ -8,21 +8,6 @@ void util_sleep(uint32_t msec){
     }
 }
 
-void main00(void){
-    while(true){
-    }
-}
-
-void main01(void){
-    while(true){
-    }
-}
-
-void main02(void){
-    while(true){
-    }
-}
-
 void output_system_stats(void){
     uint32_t core_clock_speed=system_core_clock();
     uint8_t str[]="\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
@@ -101,6 +86,20 @@ RGBColor hsvtorgb(uint8_t hue, uint8_t sat, uint8_t val){
 }
 
 
+void main00(void){
+    while(true){
+    }
+}
+
+void main01(void){
+    while(true){
+    }
+}
+
+void main02(void){
+    while(true){
+    }
+}
 
 void main03(void){
 
