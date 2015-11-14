@@ -1,10 +1,26 @@
 #include "system.h"
 #include "hwdef_systick.h"
 
-uint32_t system_LongCount=0;
+typedef enum{
+    INITIALIZED,
+    STARTED,
+    WAITING,
+    STOPPED,
+    UNINITIALIZED
+}ProcessState;
+
+
+typedef struct{
+    uint32_t id;
+    uint32_t stack;
+    ProcessState state;
+}ProcessEntry;    
+
+
 volatile uint32_t proc[4];
 volatile uint32_t proc_index=0;
 volatile uint32_t stack=0;
+volatile uint32_t system_LongCount=0;
 
 #define SYSTICK_IRQ_PRIORITY (*(volatile uint8_t *)(0xE000E400))
 
@@ -13,10 +29,11 @@ void initialize_systick(void){
     SYSTICK_CONTROL.bits.selectClockSource=1;
     SYSTICK_CONTROL.bits.enableIrq=1;
     SYSTICK_CONTROL.bits.enableCounter=1;
-
     SYSTICK_IRQ_PRIORITY=0x00;
 }
 
+
+//This 
 void SysTick_Handler(void){
     asm volatile(
         "ldr       r1,  .saveContext               \n"
@@ -53,6 +70,7 @@ void exit(void){
     }
 }
 
+//
 void init_stack(uint32_t bot, uint32_t entry){
     uint32_t *stack=(uint32_t *)bot;
     stack[16]=0x01000000;
