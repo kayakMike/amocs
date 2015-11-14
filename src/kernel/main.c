@@ -1,5 +1,6 @@
 #include "system.h"
 #include "string.h"
+#include "color.h"
 
 void util_sleep(uint32_t msec){
     uint32_t i=120000*msec;
@@ -21,91 +22,29 @@ void output_system_stats(void){
     uart0_send("\n\r");
 }
 
-typedef struct{
-    uint8_t red;
-    uint8_t grn;
-    uint8_t blu;
-}RGBColor;
-
-
-RGBColor hsvtorgb(uint8_t hue, uint8_t sat, uint8_t val){
-    uint8_t region, fpart, p, q, t;
-    RGBColor pix;
-    if(sat==0){
-        pix.red=val;
-        pix.grn=val;
-        pix.blu=val;
-    }
-    else{
-        /* make hue 0-5 */
-        region=hue/43;
-
-        /* find remainder part, make it from 0-255 */
-        fpart = (hue - (region * 43)) * 6;
-        /* calculate temp vars, doing integer multiplication */
-        p = (val*(255-sat))>> 8;
-        q = (val*(255-((sat*fpart)>>8)))>>8;
-        t = (val*(255-((sat*(255-fpart))>>8)))>>8;
-            
-        /* assign temp vars based on color cone region */
-        switch(region){
-            case 0:
-                pix.red=val;
-                pix.grn=t; 
-                pix.blu=p; 
-                break;
-            case 1:
-                pix.red=q;
-                pix.grn=val;
-                pix.blu=p;
-                break;
-            case 2:
-                pix.red=p;
-                pix.grn=val;
-                pix.blu=t;
-                break;
-            case 3:
-                pix.red=p;
-                pix.grn=q;
-                pix.blu=val;
-                break;
-            case 4:
-                pix.red=t;
-                pix.grn=p; 
-                pix.blu=val; 
-                break;
-            default:
-                pix.red=val; 
-                pix.grn=p; 
-                pix.blu=q; 
-                break;
-        }
-    }
-
-    return pix;
-}
-
-
 void main00(void){
     while(true){
+        uart0_send("main00! \n\r");
     }
 }
 
 void main01(void){
     while(true){
+        uart0_send("main01! \n\r");
     }
 }
 
 void main02(void){
     while(true){
+        uart0_send("main02! \n\r");
     }
 }
 
 void main03(void){
 
 
-    util_sleep(2);
-    nrz0_enable();
+//    util_sleep(2);
+//    nrz0_enable();
 
     uint8_t msg[15]={0x00,0x00,0x00, 
                      0x00,0xFF,0x00, 
@@ -116,9 +55,8 @@ void main03(void){
     RGBColor pix;
     
     while(true){
+        uart0_send("main03! \n\r");
         gpio_toggle();
-//        output_system_stats();
-//        util_sleep(1);
         pix=hsvtorgb(i+  0,255, 25);
         msg[ 0]=pix.grn;
         msg[ 1]=pix.red;
@@ -139,7 +77,6 @@ void main03(void){
         msg[12]=pix.grn;
         msg[13]=pix.red;
         msg[14]=pix.blu;
-
         nrz0_send_message(msg,15);
         i++;
     }

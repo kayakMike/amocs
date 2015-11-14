@@ -26,6 +26,9 @@ void nrz0_disable(void);
 void nrz0_enable(void);
 void nrz0_send_message(uint8_t *bytes, uint32_t len);
 
+void initialize_systick(void);
+void exit(void);
+void initialize_stacks(void);
 void main00(void);
 void main01(void);
 void main02(void);

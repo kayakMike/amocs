@@ -1,6 +1,6 @@
 #include "system.h"
 #include "micro_types.h"
-#include "hwdef_systick.h"
+#include "systick.h"
 
 void (*vectors[68])(void) __attribute__ ((section(".vectors")))={
     (void *)&_stack_init,

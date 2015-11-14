@@ -91,7 +91,7 @@ typedef struct{                    //exception  index
     uint8_t canact    ;
     uint8_t res[30]   ;
 }InterruptPriorityControl;
-#define NVIC_PRIORITY_CONTROL (*(volatile InterruptPriorityControl *)(0xE000E400))
+#define NVIC_PRIORITY_CTL (*(volatile InterruptPriorityControl *)(0xE000E400))
 
 /**
 s

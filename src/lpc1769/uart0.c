@@ -1,8 +1,8 @@
 #include "micro_types.h"
-#include "hwdef_gpio.h"
-#include "hwdef_pinmx.h"
-#include "hwdef_uart.h"
-#include "hwdef_clock.h"
+#include "gpio.h"
+#include "pinmx.h"
+#include "uart.h"
+#include "clock.h"
 
 #include "system.h"
 
@@ -54,14 +54,14 @@ void uart0_initialize(void){
 
     UART0_LINE_CTL.divisor_latch=1;    //unlock divisors
     UART0_DLM.buffer=0;
-//    UART0_DLL.buffer=17;
     UART0_DLL.buffer=43;
     UART0_LINE_CTL.divisor_latch=0;    //relock divisors
     UART0_TRANSMIT_ENABLE.tx_enable=1;
 } 
 
 
-
+//  ASSUMPTION:  SYSTEM_CORE_CLOCK is 4MHz
+//    UART0_DLL.buffer=17;
 
 //  ASSUMPTION: SYSTEM_CORE_CLOCK is 120MHz...
 //    Calculation from Data Sheets 

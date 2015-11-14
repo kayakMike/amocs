@@ -1,9 +1,9 @@
 #include "system.h"
 #include "micro_types.h"
-#include "hwdef_clock.h"
-#include "hwdef_timer.h"
-#include "hwdef_nvic.h"
-#include "hwdef_pinmx.h"
+#include "clock.h"
+#include "timer.h"
+#include "nvic.h"
+#include "pinmx.h"
 
 
 //#define NRZ_MAX     (4*3*8)
@@ -17,7 +17,6 @@
 //index to the current bit
 volatile uint32_t nrz_index;
 volatile uint32_t nrz_values[NRZ_MAX];
-
 volatile uint8_t  nrz_xmit_complete=true;
 
 void Timer0_Handler(void){
@@ -48,6 +47,7 @@ void nrz0_enable(void){
 
 void nrz0_disable(void){
     while(nrz_xmit_complete==false){};
+    nrz_xmit_complete=false;
     TIMER0_CTL.enable=0;
     TIMER0_CTL.reset=0;
 }
@@ -67,7 +67,6 @@ void nrz0_send_message(uint8_t *in, uint32_t len){
             nrz_values[i]=NRZ_ZERO;
         }
     }
-    nrz_xmit_complete=false;
     nrz0_enable();
 }
 
@@ -84,5 +83,7 @@ void Timer0_Initialize(void){
     NVIC_SET_ENABLE.timer0=1;
     NVIC_CLR_PENDING.timer0=1;
     TIMER0_CTL.enable=0;
+
+    NVIC_PRIORITY_CTL.timer0=0x1F;
 }
 

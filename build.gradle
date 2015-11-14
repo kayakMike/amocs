@@ -18,17 +18,17 @@ model {
             }
             target("stellaris"){
                 linker.withArguments{args->
-                    args << "-T" << "lm3s6965evb.ld"
+                    args << "-T" << "src/stellaris/linker.ld"
                 }
             }
             target("netduino2"){
                 linker.withArguments{args->
-                    args << "-T" << "stm32f205.ld"
+                    args << "-T" << "src/netduino2/linker.ld"
                 }
             }
             target("lpc1769"){
                 linker.withArguments{args->
-                    args << "-T" << "lpc1769.ld"
+                    args << "-T" << "src/lpc1769/linker.ld"
                 }
             }
         }
@@ -84,11 +84,11 @@ model {
             sources {
                 c {
                     source {
-                        srcDirs "src/kernel", "src/lpc1769"
+                        srcDirs "src/kernel", "src/lpc1769", "src/lpc1769/hwdef"
                         include "**/*.c", "**/*.h"
                     }
                     exportedHeaders {
-                        srcDir "src/kernel"
+                        srcDirs "src/kernel", "src/lpc1769/hwdef"
                         include "**/*.h"
                     }
                 }

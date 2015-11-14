@@ -2,17 +2,19 @@
 #include "hwdef_systick.h"
 
 uint32_t system_LongCount=0;
+volatile uint32_t proc[4];
+volatile uint32_t proc_index=0;
+volatile uint32_t stack=0;
 
-extern uint32_t proc[4];
-extern uint32_t proc_index;
-extern uint32_t stack;
+#define SYSTICK_IRQ_PRIORITY (*(volatile uint8_t *)(0xE000E400))
 
-
-void sysinit_SysTick(void){
-//    SYSTICK_RELOAD_VALUE.bits.counterValue=(1000000-1);
+void initialize_systick(void){
+    SYSTICK_RELOAD_VALUE.bits.counterValue=(120000-1);
     SYSTICK_CONTROL.bits.selectClockSource=1;
     SYSTICK_CONTROL.bits.enableIrq=1;
     SYSTICK_CONTROL.bits.enableCounter=1;
+
+    SYSTICK_IRQ_PRIORITY=0x00;
 }
 
 void SysTick_Handler(void){
@@ -44,5 +46,30 @@ void SysTick_Handler(void){
         ".loadContext: .word stack                 \n"
     );
 }
+
+void exit(void){
+    while(true){
+
+    }
+}
+
+void init_stack(uint32_t bot, uint32_t entry){
+    uint32_t *stack=(uint32_t *)bot;
+    stack[16]=0x01000000;
+    stack[15]=(uint32_t)entry;
+    stack[14]=(uint32_t)exit;
+    stack[ 8]=0xFFFFFFF9;
+}
+
+void initialize_stacks(void){
+    //proc[0]=0x20010000;
+    //notsureaboutthis....
+    proc[1]=0x10003000-0x10; //4k stack space
+    init_stack(0x10003000-0x10,(uint32_t)main01);
+    proc[2]=0x10002000-0x10; //4k stack space
+    init_stack(0x10002000-0x10,(uint32_t)main02);
+    proc[3]=0x10001000-0x10; //4k stack space
+    init_stack(0x10001000-0x10,(uint32_t)main03);
+} 
 
 

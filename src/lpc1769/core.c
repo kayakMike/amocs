@@ -1,5 +1,5 @@
 #include "system.h"
-#include "hwdef_clock.h"
+#include "clock.h"
 
 #define IRC_OSCILLATOR  4000000
 #define MAIN_OSCILLATOR 12000000

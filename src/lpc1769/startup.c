@@ -1,6 +1,5 @@
 #include "system.h"
 #include "micro_types.h"
-#include "hwdef_systick.h"
 
 void (*vectors[68])(void) __attribute__ ((section(".vectors")))={
     (void *)&_stack_init,
@@ -45,10 +44,13 @@ void sysinit_memory(void){
 void Reset_Handler(void){
     sysinit_memory();
     system_clock_initialize();
+    initialize_stacks();
+    initialize_systick();
+
     gpio_setup();
     uart0_initialize();
     Timer0_Initialize();
-    main03();
+//    main03();
 } 
 
 void NMI_Handler             (void){};
