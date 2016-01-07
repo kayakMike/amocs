@@ -1,4 +1,5 @@
 #include "system.h"
+#include "peripheral_isr.h"
 #include "micro_types.h"
 #include "clock.h"
 #include "timer.h"
@@ -19,7 +20,7 @@ volatile uint32_t nrz_index;
 volatile uint32_t nrz_values[NRZ_MAX];
 volatile uint8_t  nrz_xmit_complete=true;
 
-void Timer0_Handler(void){
+void Timer0_ISR(void){
     if(TIMER0_MATCH1==NRZ_PAUSE){
         nrz_xmit_complete=true;
         TIMER0_CTL.enable=0;
@@ -40,14 +41,14 @@ void Timer0_Handler(void){
 }
 
 void nrz0_enable(void){
+    nrz_xmit_complete=false;
     TIMER0_MATCH1=NRZ_PERIOD;
     TIMER0_CTL.enable=1;
     TIMER1_CTL.reset=0;
 }
 
 void nrz0_disable(void){
-    while(nrz_xmit_complete==false){};
-    nrz_xmit_complete=false;
+    while(nrz_xmit_complete!=true){}
     TIMER0_CTL.enable=0;
     TIMER0_CTL.reset=0;
 }
@@ -56,7 +57,6 @@ void nrz0_send_message(uint8_t *in, uint32_t len){
     uint8_t byte=0;
     uint8_t bit=0;
     uint8_t i=0;;
-    nrz0_disable();
     for(i=0;i<NRZ_MAX;i++){
         byte=i/8;
         bit=7-(i%8);
@@ -70,7 +70,7 @@ void nrz0_send_message(uint8_t *in, uint32_t len){
     nrz0_enable();
 }
 
-void Timer0_Initialize(void){
+void nrz0_initialize(void){
     PERIPHERAL_CLOCK_SEL0.timer0=1;
     TIMER0_PRESCALE=0;
     TIMER0_EXT_MATCH_CTL.em0=1;

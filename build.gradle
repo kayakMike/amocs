@@ -46,17 +46,18 @@ model {
         }
         
     }
+
     components {
         stellaris(NativeExecutableSpec) {
             targetPlatform "stellaris"
             sources {
                 c {
                     source {
-                        srcDirs "src/kernel", "src/stellaris"
-                        include "**/*.c", "**/*.h"
+                        srcDirs "src/common", "src/cortex-m3","src/stellaris"
+                        include "**/*.c"
                     }
                     exportedHeaders {
-                        srcDir "src/kernel"
+                        srcDirs "src/common", "src/cortex-m3"
                         include "**/*.h"
                     }
                 }
@@ -68,11 +69,11 @@ model {
             sources {
                 c {
                     source {
-                        srcDirs "src/kernel", "src/netduino2"
-                        include "**/*.c", "**/*.h"
+                        srcDirs "src/common", "src/cortex-m3","src/netduino2"
+                        include "**/*.c"
                     }
                     exportedHeaders {
-                        srcDir "src/kernel"
+                        srcDirs "src/common", "src/cortex-m3"
                         include "**/*.h"
                     }
                 }
@@ -84,11 +85,11 @@ model {
             sources {
                 c {
                     source {
-                        srcDirs "src/kernel", "src/lpc1769", "src/lpc1769/hwdef"
-                        include "**/*.c", "**/*.h"
+                        srcDirs "src/common", "src/cortex-m3", "src/lpc1769", "src/lpc1769/hwdef"
+                        include "**/*.c"
                     }
                     exportedHeaders {
-                        srcDirs "src/kernel", "src/lpc1769/hwdef"
+                        srcDirs "src/common", "src/cortex-m3", "src/lpc1769/hwdef"
                         include "**/*.h"
                     }
                 }

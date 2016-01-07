@@ -1,6 +1,7 @@
 #include "system.h"
 #include "micro_types.h"
-#include "systick.h"
+#include "core.h"
+
 
 void (*vectors[68])(void) __attribute__ ((section(".vectors")))={
     (void *)&_stack_init,
@@ -19,8 +20,6 @@ void (*vectors[68])(void) __attribute__ ((section(".vectors")))={
     0,                  
     PendSV_Handler,     
     SysTick_Handler,
-    WatchDog_Handler,
-    Timer0_Handler
 };
 
 

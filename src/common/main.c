@@ -1,42 +1,26 @@
 #include "system.h"
 #include "string.h"
 #include "color.h"
-
-void util_sleep(uint32_t msec){
-    uint32_t i=120000*msec;
-    while(i--){
-        //noop??
-    }
-}
-
-void output_system_stats(void){
-    uint32_t core_clock_speed=system_core_clock();
-    uint8_t str[]="\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
-    uart0_send("BASIC SYSTEM STATS! \n\r");
-    uart0_send("    System CPU Clock:  ");
-    uint_to_decimal_string(core_clock_speed,str);
-    uart0_send(str);
-    uart0_send(" ");
-    uint_to_hex_string(core_clock_speed,str);
-    uart0_send(str);
-    uart0_send("\n\r");
-}
+#include "utility.h"
 
 void main00(void){
     while(true){
         uart0_send("main00! \n\r");
+        util_sleep(100);
     }
 }
 
 void main01(void){
     while(true){
         uart0_send("main01! \n\r");
+        util_sleep(100);
     }
 }
 
 void main02(void){
     while(true){
         uart0_send("main02! \n\r");
+        util_sleep(100);
     }
 }
 
@@ -46,11 +30,7 @@ void main03(void){
 //    util_sleep(2);
 //    nrz0_enable();
 
-    uint8_t msg[15]={0x00,0x00,0x00, 
-                     0x00,0xFF,0x00, 
-                     0x00,0x00,0xFF, 
-                     0xFF,0x00,0xFF,
-                     0x00,0xFF,0xFF};
+    uint8_t msg[15]={0x00,0x00,0x00, 0x00,0xFF,0x00, 0x00,0x00,0xFF, 0xFF,0x00,0xFF, 0x00,0xFF,0xFF};
     uint8_t i=0;
     RGBColor pix;
     
@@ -78,6 +58,7 @@ void main03(void){
         msg[13]=pix.red;
         msg[14]=pix.blu;
         nrz0_send_message(msg,15);
+        util_sleep(10);
         i++;
     }
 }

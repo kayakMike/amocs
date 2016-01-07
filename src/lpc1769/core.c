@@ -5,6 +5,33 @@
 #define MAIN_OSCILLATOR 12000000
 #define RTC_OSCILLATOR  32768
 
+
+extern uint32_t _text_end;
+extern uint32_t _bss_start;
+extern uint32_t _bss_end;
+extern uint32_t _data_start;
+extern uint32_t _data_end;
+extern uint32_t _datai_start;
+extern uint32_t _sidata;
+
+
+void sysinit_memory(void);
+void system_clock_initialize(void);
+
+//Reset ISR, the main entry point!
+void Reset_ISR(void){
+    sysinit_memory();
+    system_clock_initialize();
+
+    gpio_initialize();
+    nrz0_initialize();
+    uart0_initialize();
+    initialize_stacks();
+    initialize_systick();
+    
+    main00();
+} 
+
 static inline void main_pll_feed(void){
     PLL0_FEED.feed=0xAA;
     PLL0_FEED.feed=0x55;
@@ -89,3 +116,20 @@ uint32_t system_core_clock(void){
     return clk_speed; 
 }
 
+//MemCopy Stuff. Note  that the buffers are 4 Byte Alligned
+void sysinit_memory(void){
+    uint32_t *data_begin   = &_data_start;
+    uint32_t *data_end     = &_data_end;
+    uint32_t *datai_begin  = &_sidata;
+    uint32_t *bss_ptr      = &_bss_start;
+    //INIT DATA:  copies data section from flash to ram
+    while(data_begin < data_end){
+        *data_begin = *datai_begin;
+        data_begin++;
+        datai_begin++;
+    }
+    //INIT BSS: loads a bunch of zeroes to bss section
+    while (bss_ptr < &_bss_end){
+        *bss_ptr++ = 0;
+    }
+}

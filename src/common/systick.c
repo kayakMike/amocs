@@ -1,6 +1,8 @@
 #include "system.h"
 #include "hwdef_systick.h"
+//#include "core_isr.h"
 
+//some simple ideas...
 typedef enum{
     INITIALIZED,
     STARTED,
@@ -9,7 +11,7 @@ typedef enum{
     UNINITIALIZED
 }ProcessState;
 
-
+//
 typedef struct{
     uint32_t id;
     uint32_t stack;
@@ -24,17 +26,10 @@ volatile uint32_t system_LongCount=0;
 
 #define SYSTICK_IRQ_PRIORITY (*(volatile uint8_t *)(0xE000E400))
 
-void initialize_systick(void){
-    SYSTICK_RELOAD_VALUE.bits.counterValue=(120000-1);
-    SYSTICK_CONTROL.bits.selectClockSource=1;
-    SYSTICK_CONTROL.bits.enableIrq=1;
-    SYSTICK_CONTROL.bits.enableCounter=1;
-    SYSTICK_IRQ_PRIORITY=0x00;
-}
-
+void SysTick_ISR(void) __attribute__((interrupt,naked));
 
 //This 
-void SysTick_Handler(void){
+void SysTick_ISR(void){
     asm volatile(
         "ldr       r1,  .saveContext               \n"
         "mrs       r0,  msp                        \n"
@@ -80,14 +75,18 @@ void init_stack(uint32_t bot, uint32_t entry){
 }
 
 void initialize_stacks(void){
-    //proc[0]=0x20010000;
-    //notsureaboutthis....
-    proc[1]=0x10003000-0x10; //4k stack space
-    init_stack(0x10003000-0x10,(uint32_t)main01);
-    proc[2]=0x10002000-0x10; //4k stack space
-    init_stack(0x10002000-0x10,(uint32_t)main02);
-    proc[3]=0x10001000-0x10; //4k stack space
-    init_stack(0x10001000-0x10,(uint32_t)main03);
+    proc[1]=   0x10006000-0x10; //4k stack space
+    init_stack(0x10006000-0x10,(uint32_t)main01);
+    proc[2]=   0x10004000-0x10; //4k stack space
+    init_stack(0x10004000-0x10,(uint32_t)main02);
+    proc[3]=   0x10002000-0x10; //4k stack space
+    init_stack(0x10002000-0x10,(uint32_t)main03);
 } 
 
-
+void initialize_systick(void){
+    SYSTICK_RELOAD_VALUE.bits.counterValue=(1200000-1);
+    SYSTICK_CONTROL.bits.selectClockSource=1;
+    SYSTICK_CONTROL.bits.enableIrq=1;
+    SYSTICK_CONTROL.bits.enableCounter=1;
+    SYSTICK_IRQ_PRIORITY=0x00;
+}
