@@ -3,63 +3,89 @@
 #include "color.h"
 #include "utility.h"
 
+
+void output_number(uint32_t num){
+    uint8_t str[10];
+    uint_to_decimal_string(num,str);
+    uart0_send(str);
+} 
+
+void testcall(void *ptr){
+    gpio_toggle020();
+    *((uint8_t *)ptr)=*((uint8_t *)ptr)+1;
+    uart0_send("system uptime: ");
+    output_number(systick_return_uptime());
+    uart0_send(" end \n\r");
+}
+
 void main00(void){
+    uint8_t data[512];
+    uint8_t str[10];
+    uint32_t i;
+    uint32_t j;
+    uint32_t k=0;
+
+    spisd_initialize_card();
+
     while(true){
-        uart0_send("main00! \n\r");
-        util_sleep(100);
+        util_sleep(10000);
+        uart0_send("sdcard init test: \n\r");
+         
+        spisd_read_single_block(data,k);
+        uart0_send("\t block 0: \n\r");
+        for(i=0;i<32;i++){
+            uint_to_hex_string(i,str);
+            uart0_send(str);
+            uart0_send(": ");
+            for(j=0;j<16;j++){
+                uint_to_hex_bstring(data[j+i*16],str);
+                uart0_send(str);
+                uart0_send(" ");
+            }
+            uart0_send("\n\r");
+        }
+        uart0_send("\n\rsdcard init test complete \n\r");
+        k++;
     }
 }
 
 void main01(void){
+    SoftTimer stimer0;
+    SoftTimer stimer1;
+    uint8_t arg=0x00;
+    uart0_send("Timer Test \n\r");
+    util_sleep(1000);
+
+    stimer0.period=2000;
+    stimer0.callback=&testcall;
+    stimer0.arg=&arg;
+    
+    stimer1.period=3000;
+    stimer1.callback=&testcall;
+    stimer1.arg=&arg;
+
+//    systick_register_swtimer(&stimer0);
+//    systick_register_swtimer(&stimer1);
+
     while(true){
-        uart0_send("main01! \n\r");
-        util_sleep(100);
+//        output_number(arg);
+//        uart0_send(" end \n\r");
+//        util_sleep(1000);
     }
+    
 }
+
 
 void main02(void){
     while(true){
-        uart0_send("main02! \n\r");
-        util_sleep(100);
+        uart2_send("uart2 test! ");
     }
 }
 
 void main03(void){
 
-
-//    util_sleep(2);
-//    nrz0_enable();
-
-    uint8_t msg[15]={0x00,0x00,0x00, 0x00,0xFF,0x00, 0x00,0x00,0xFF, 0xFF,0x00,0xFF, 0x00,0xFF,0xFF};
     uint8_t i=0;
-    RGBColor pix;
-    
+    uint8_t msg[12];
     while(true){
-        uart0_send("main03! \n\r");
-        gpio_toggle();
-        pix=hsvtorgb(i+  0,255, 25);
-        msg[ 0]=pix.grn;
-        msg[ 1]=pix.red;
-        msg[ 2]=pix.blu;
-        pix=hsvtorgb(i+ 64,255, 25);
-        msg[ 3]=pix.grn;
-        msg[ 4]=pix.red;
-        msg[ 5]=pix.blu;
-        pix=hsvtorgb(i+128,255, 25);
-        msg[ 6]=pix.grn;
-        msg[ 7]=pix.red;
-        msg[ 8]=pix.blu;
-        pix=hsvtorgb(i+192,255, 25);
-        msg[ 9]=pix.grn;
-        msg[10]=pix.red;
-        msg[11]=pix.blu;
-        pix=hsvtorgb(i ,255, 25);
-        msg[12]=pix.grn;
-        msg[13]=pix.red;
-        msg[14]=pix.blu;
-        nrz0_send_message(msg,15);
-        util_sleep(10);
-        i++;
     }
 }
-

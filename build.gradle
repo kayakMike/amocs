@@ -1,7 +1,5 @@
 apply plugin: 'c'
 
-
-
 model {
     toolChains {
         gcc(Gcc) {
@@ -89,7 +87,7 @@ model {
                         include "**/*.c"
                     }
                     exportedHeaders {
-                        srcDirs "src/common", "src/cortex-m3", "src/lpc1769/hwdef"
+                        srcDirs "src/common", "src/cortex-m3", "src/lpc1769/hwdef", "src/cortex-m3/hwdef"
                         include "**/*.h"
                     }
                 }
@@ -130,17 +128,26 @@ task lpc1769CreateHex(type: Exec, dependsOn: 'lpc1769Executable'){
     args '-O', 'ihex', '--strip-debug', 'lpc1769', 'lpc1769.hex'
 }
 
+task lpc1769Reset(dependsOn: 'lpc1769CreateHex'){
+
+    doLast{
+        File reset=new File("/sys/class/gpio/gpio19/value")
+        reset.write("0")
+        reset.write("1")
+    }
+}
+
 task lpc1769StartISP(dependsOn: 'lpc1769CreateHex'){
 
-    
-    doLast {
+    //gpio 19 is the GPIO on the odroid that gets wired to RESET pin
+    //gpio 24 is the GPIO on the odroid that gets wired to the ISP pin 
+    doLast{
         File reset=new File("/sys/class/gpio/gpio19/value")
         File isp=new File("/sys/class/gpio/gpio24/value")
         isp.write("0")
         reset.write("0")
-        sleep(500)
         reset.write("1")
-   }
+    }
 }
 
 task lpc1769Load(type: Exec, dependsOn: 'lpc1769CreateHex'){
@@ -153,7 +160,6 @@ task lpc1769Load(type: Exec, dependsOn: 'lpc1769CreateHex'){
         File isp=new File("/sys/class/gpio/gpio24/value")
         isp.write("0")
         reset.write("0")
-//        sleep(500)
         reset.write("1")
     }
     
@@ -161,7 +167,6 @@ task lpc1769Load(type: Exec, dependsOn: 'lpc1769CreateHex'){
         File reset=new File("/sys/class/gpio/gpio19/value")
         File isp=new File("/sys/class/gpio/gpio24/value")
         reset.write('0')
-//        sleep(500)
         isp.write('1')
         reset.write('1')
     }

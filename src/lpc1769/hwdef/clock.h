@@ -100,6 +100,6 @@ typedef struct{
     unsigned mctl       : 2;
 }PeripheralClock1;
 
-#define PERIPHERAL_CLOCK_SEL1 (*(volatile PeripherealClock1 *)(0x400FC1AC))
+#define PERIPHERAL_CLOCK_SEL1 (*(volatile PeripheralClock1 *)(0x400FC1AC))
 
 #endif //__HWDEF_CLOCK_H

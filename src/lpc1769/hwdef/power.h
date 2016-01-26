@@ -50,7 +50,7 @@ typedef struct{
     unsigned usb          : 1;
 }PowerControlPeripheral;
 
-#define PERIPHERAL_POWER (*(volatile PowerControlPeripheral)(0x400FC0C4))
+#define PERIPHERAL_POWER (*(volatile PowerControlPeripheral *)(0x400FC0C4))
 
 
 #endif // __HWDEF_POWER_H

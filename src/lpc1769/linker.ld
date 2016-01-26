@@ -1,4 +1,4 @@
-ENTRY(Reset_Handler)
+ENTRY(Reset_ISR)
 MEMORY{
     FLASH (rx)      : ORIGIN = 0x00000000, LENGTH = 512K
     SRAM (rwx)      : ORIGIN = 0x10000000, LENGTH = 32K

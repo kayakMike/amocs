@@ -116,15 +116,15 @@ typedef struct{
 #define TIMER3_CAPTURE_CTL (*(volatile TimerCaptureControl *)(0x40094028))
 
 typedef struct{
-    unsigned  em0       : 1;
-    unsigned  em1       : 1;
-    unsigned  em2       : 1;
-    unsigned  em3       : 1;
-    unsigned  mode0     : 2;
-    unsigned  mode1     : 2;
-    unsigned  mode2     : 2;
-    unsigned  mode3     : 2;
-    unsigned            : 4;
+    unsigned  em0          : 1;
+    unsigned  em1          : 1;
+    unsigned  em2          : 1;
+    unsigned  em3          : 1;
+    unsigned  mode0        : 2;
+    unsigned  mode1        : 2;
+    unsigned  mode2        : 2;
+    unsigned  mode3        : 2;
+    unsigned               : 4;
 }TimerExternalMatchControl;
 
 #define TIMER0_EXT_MATCH_CTL (*(volatile TimerExternalMatchControl *)(0x4000403C))

@@ -5,7 +5,8 @@ uint32_t system_core_clock(void){
     return 0xFFFFFFFF;
 }
 void gpio_setup(void){}
-void gpio_toggle(void){}
+void gpio_toggle020(void){}
+void gpio_toggle027(void){}
 void gpio_on(void){}
 void gpio_off(void){}
 

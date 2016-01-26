@@ -42,4 +42,5 @@ typedef union{
 #define SYSTICK_CALIBRATION   (*(volatile SysTickCalibration *)(0xE000E018))
 //END SYSTICK STUFF
 
+#define SYSTICK_IRQ_PRIORITY (*(volatile uint8_t *)(0xE000E400))
 #endif //__HDEF_SYSTICK_H

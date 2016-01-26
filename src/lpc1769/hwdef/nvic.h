@@ -41,7 +41,8 @@ typedef struct{            //exception  index
     unsigned pll1        : 1;
     unsigned usbact      : 1;
     unsigned canact      : 1;
-    unsigned             :30; 
+    unsigned soft0       : 1; 
+    unsigned             :29; 
 }InterruptVectorControl;
 
 
@@ -89,7 +90,8 @@ typedef struct{                    //exception  index
     uint8_t pll1      ;
     uint8_t usbact    ;
     uint8_t canact    ;
-    uint8_t res[30]   ;
+    uint8_t soft0     ;
+    uint8_t res[29]   ;
 }InterruptPriorityControl;
 #define NVIC_PRIORITY_CTL (*(volatile InterruptPriorityControl *)(0xE000E400))
 

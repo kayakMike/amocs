@@ -111,9 +111,127 @@ typedef struct{          //|FUNC0    FUNC1         FUNC2    FUNC3
     unsigned        :28; //|
 }PinConfig;                
 
-#define PIN_FUNC (*(volatile PinConfig *)(0x4002C000))
-#define PIN_MODE (*(volatile PinConfig *)(0x4002C040))
+typedef struct{         
+    unsigned p0_00  : 1;
+    unsigned p0_01  : 1;
+    unsigned p0_02  : 1;
+    unsigned p0_03  : 1;
+    unsigned p0_04  : 1;
+    unsigned p0_05  : 1;
+    unsigned p0_06  : 1;
+    unsigned p0_07  : 1;
+    unsigned p0_08  : 1;
+    unsigned p0_09  : 1;
+    unsigned p0_10  : 1;
+    unsigned p0_11  : 1;
+    unsigned        : 1;
+    unsigned        : 1;
+    unsigned        : 1;
+    unsigned p0_15  : 1;
+    unsigned p0_16  : 1;
+    unsigned p0_17  : 1;
+    unsigned p0_18  : 1;
+    unsigned p0_19  : 1;
+    unsigned p0_20  : 1;
+    unsigned p0_21  : 1;
+    unsigned p0_22  : 1;
+    unsigned p0_23  : 1;
+    unsigned p0_24  : 1;
+    unsigned p0_25  : 1;
+    unsigned p0_26  : 1;
+    unsigned        : 1;
+    unsigned        : 1;
+    unsigned p0_29  : 1;
+    unsigned p0_30  : 1;
+    unsigned        : 1;
+    unsigned p1_00  : 1;
+    unsigned p1_01  : 1;
+    unsigned        : 1;
+    unsigned        : 1;
+    unsigned p1_04  : 1;
+    unsigned        : 1;
+    unsigned        : 1;
+    unsigned        : 1;
+    unsigned p1_08  : 1;
+    unsigned p1_09  : 1;
+    unsigned p1_10  : 1;
+    unsigned        : 1;
+    unsigned        : 1;
+    unsigned        : 1;
+    unsigned p1_14  : 1;
+    unsigned p1_15  : 1;
+    unsigned p1_16  : 1;
+    unsigned p1_17  : 1;
+    unsigned p1_18  : 1;
+    unsigned p1_19  : 1;
+    unsigned p1_20  : 1;
+    unsigned p1_21  : 1;
+    unsigned p1_22  : 1;
+    unsigned p1_23  : 1;
+    unsigned p1_24  : 1;
+    unsigned p1_25  : 1;
+    unsigned p1_26  : 1;
+    unsigned p1_27  : 1;
+    unsigned p1_28  : 1;
+    unsigned p1_29  : 1;
+    unsigned p1_30  : 1;
+    unsigned p1_31  : 1;
+    unsigned p2_00  : 1;
+    unsigned p2_01  : 1;
+    unsigned p2_02  : 1;
+    unsigned p2_03  : 1;
+    unsigned p2_04  : 1;
+    unsigned p2_05  : 1;
+    unsigned p2_06  : 1;
+    unsigned p2_07  : 1;
+    unsigned p2_08  : 1;
+    unsigned p2_09  : 1;
+    unsigned p2_10  : 1;
+    unsigned p2_11  : 1;
+    unsigned p2_12  : 1;
+    unsigned p2_13  : 1;
+    unsigned        : 1;
+    unsigned        : 1;
+    unsigned        :16;
+    unsigned        :16;
+    unsigned        : 1;
+    unsigned        : 1;
+    unsigned        : 1;
+    unsigned        : 1;
+    unsigned        : 1;
+    unsigned        : 1;
+    unsigned        : 1;
+    unsigned        : 1;
+    unsigned        : 1;
+    unsigned p3_25  : 1;
+    unsigned p3_26  : 1;
+    unsigned        : 1;
+    unsigned        : 1;
+    unsigned        : 1;
+    unsigned        : 1;
+    unsigned        : 1;
+    unsigned        :16;
+    unsigned        : 8;
+    unsigned p4_28  : 1;
+    unsigned p4_29  : 1;
+}PinModeOpenDrain; 
+
+#define PIN_MODE_PULLUP   0
+#define PIN_MODE_REPEATER 1 
+#define PIN_MODE_FLOAT    2 
+#define PIN_MODE_PULLDOWN 3 
+
+#define PIN_FUNC     (*(volatile PinConfig *)(0x4002C000))
+#define PIN_MODE     (*(volatile PinConfig *)(0x4002C040))
+#define PIN_DRAIN    (*(volatile PinModeOpenDrain *)(0x4002C068))
+
+
+//todo: break this out or move to i2c driver configurations.
 #define PINI2CCONFIG (*(volatile uint32_t *)(0x4002C07C))
 
 
 #endif // __HWDEF_PINMX_H
+
+
+
+

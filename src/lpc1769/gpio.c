@@ -18,13 +18,7 @@ void gpio_off(void){
     PORT0_CLR.pin00=1;
 }
 
-void gpio_toggle(void){
-    if(PORT0_VAL.pin00==1){
-        PORT0_CLR.pin00=1;
-    }
-    else{
-        PORT0_SET.pin00=1;
-    }
+void gpio_toggle020(void){
     if(PORT0_VAL.pin20==1){
         PORT0_CLR.pin20=1;
     }
@@ -33,3 +27,11 @@ void gpio_toggle(void){
     }
 }
 
+void gpio_toggle027(void){
+    if(PORT1_VAL.pin27==1){
+        PORT1_CLR.pin27=1;
+    }
+    else{
+        PORT1_SET.pin27=1;
+    }
+}
