@@ -3,12 +3,12 @@ apply plugin: 'c'
 model {
     toolChains {
         gcc(Gcc) {
-            path "/opt/x-tools/arm-none-eabi/bin"
+            path "/opt/x-tools/arm-unknown-eabi/bin"
             eachPlatform{tools->
-                tools.linker.executable            "arm-none-eabi-ld"
-                tools.cCompiler.executable         "arm-none-eabi-gcc"
-                tools.assembler.executable         "arm-none-eabi-as"
-                tools.staticLibArchiver.executable "arm-none-eabi-ar"
+                tools.linker.executable            "arm-unknown-eabi-ld"
+                tools.cCompiler.executable         "arm-unknown-eabi-gcc"
+                tools.assembler.executable         "arm-unknown-eabi-as"
+                tools.staticLibArchiver.executable "arm-unknown-eabi-ar"
                 cCompiler.withArguments{args->
                     args << "-g" 
                     args << "-fno-builtin"
@@ -107,24 +107,24 @@ task emulateStellaris(type: Exec){
 }
 
 task lpc1769Hex(type: Exec){
-    commandLine '/opt/x-tools/arm-none-eabi/bin/arm-none-eabi-objcopy'
+    commandLine '/opt/x-tools/arm-unknown-eabi/bin/arm-unknown-eabi-objcopy'
     args '-O', 'ihex', '--strip-debug', 'build/binaries/lpc1769Executable/lpc1769', 'lpc1769.hex'
 }
 
 task lpc1769Binary(type: Exec){
-    commandLine '/opt/x-tools/arm-none-eabi/bin/arm-none-eabi-objcopy'
+    commandLine '/opt/x-tools/arm-unknown-eabi/bin/arm-unknown-eabi-objcopy'
     args '-O', 'binary', '--strip-debug', 'build/binaries/lpc1769Executable/lpc1769', 'lpc1769.bin'
 }
 
 task stellarisBinary(type: Exec){
-    commandLine '/opt/x-tools/arm-none-eabi/bin/arm-none-eabi-objcopy'
+    commandLine '/opt/x-tools/arm-unknown-eabi/bin/arm-unknown-eabi-objcopy'
     args '-O', 'binary', '--strip-debug', 'build/binaries/stellarisExecutable/stellaris', 'stellaris.bin'
 }
 
 
 task lpc1769CreateHex(type: Exec, dependsOn: 'lpc1769Executable'){
     workingDir 'build/binaries/lpc1769Executable'
-    commandLine '/opt/x-tools/arm-none-eabi/bin/arm-none-eabi-objcopy'
+    commandLine '/opt/x-tools/arm-unknown-eabi/bin/arm-unknown-eabi-objcopy'
     args '-O', 'ihex', '--strip-debug', 'lpc1769', 'lpc1769.hex'
 }
 
@@ -189,14 +189,14 @@ task lpc1769StartProgram(type: Exec, dependsOn: 'lpc1769Load'){
 /*
 task createMapFile(type: Exec, dependsOn: 'snarfExecutable'){
     workingDir 'build/binaries/snarfExecutable'
-    executable '/home/base/x-tools/arm-none-eabi/bin/arm-none-eabi-nm'
+    executable '/home/base/x-tools/arm-unknown-eabi/bin/arm-unknown-eabi-nm'
     args  '-f', 'sysv', 'snarf', '-n', '-l'
     standardOutput = new FileOutputStream("${project.name}.map")
 }
 
 task createHexFile(type: Exec, dependsOn: 'createMapFile'){
     workingDir 'build/binaries/snarfExecutable'
-    commandLine '/home/base/x-tools/arm-none-eabi/bin/arm-none-eabi-objcopy'
+    commandLine '/home/base/x-tools/arm-unknown-eabi/bin/arm-unknown-eabi-objcopy'
     args '-O', 'ihex', '--strip-debug', 'snarf', 'lpc4337.hex'
 }
 
