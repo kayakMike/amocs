@@ -1,15 +1,7 @@
-#include "process.h"
+#include "thread.h"
 #include "nvic.h"
 
 
-//    uint32_t r4;      //1
-//    uint32_t r5;      //2
-//    uint32_t r6;      //3
-//    uint32_t r7;      //4
-//    uint32_t r8;      //5
-//    uint32_t r9;      //6
-//    uint32_t r10;     //7
-//    uint32_t r11;     //8
 //order of registers that the cortex-m3 saves on the stack when an interrupt occurs
 typedef struct StackFrame{
     uint32_t r4;      //0
@@ -30,21 +22,20 @@ typedef struct StackFrame{
     uint32_t psr;     //15
 }StackFrame;
 
-typedef struct ProcessEntry{
+typedef struct ThreadEntry{
     uint32_t base;
     uint32_t stack;
     uint32_t privilege;  //0 privilged 1 unprivileged
     uint8_t status;
-}ProcessEntry;
+}ThreadEntry;
 
-#define PROC_MAX 4
+#define THREAD_MAX 4
 
 volatile uint32_t save;
-volatile uint32_t proc[4];
-volatile uint32_t proc_index=0;
-volatile uint32_t proc_total=0;
+volatile uint32_t thread_index=0;
+volatile uint32_t thread_total=0;
 
-volatile ProcessEntry proc_table[PROC_MAX];
+volatile ThreadEntry thread_table[THREAD_MAX];
 
 
 //switch context for the main stack pointer
@@ -72,11 +63,11 @@ void isr_soft0(void){
        
         "str      r0  , [%[stack]]       \n"
         :
-        :[stack] "r" (&(proc_table[proc_index].stack)), [priv] "r" (proc_table[proc_index].privilege)
+        :[stack] "r" (&(thread_table[thread_index].stack)), [priv] "r" (thread_table[thread_index].privilege)
         : "r0" , "r1"
     );
     
-    proc_index=(proc_index+1)%PROC_MAX;
+    thread_index=(thread_index+1)%THREAD_MAX;
   
     asm volatile(
         //restore the stack
@@ -97,64 +88,61 @@ void isr_soft0(void){
         //end the ISR
         "bx     r14                    \n" 
         :
-        :[stack] "r" (&(proc_table[proc_index].stack)), [priv] "r" (proc_table[proc_index].privilege)
+        :[stack] "r" (&(thread_table[thread_index].stack)), [priv] "r" (thread_table[thread_index].privilege)
         : "r0" , "r1" 
     );
 }
 
-void proc_request_context_switch(void){
+void thread_triggerContextSwitch(void){
     //brain dead task switcher goes here
     //trigger the interrupt
+    blink_toggleOutput(0,20);
     NVIC_SET_PENDING.soft0=1;
 }
 
 
-void proc_exit(void){
+void thread_exit(void){
     while(true){
     }
 }
 
-uint32_t proc_initialize_stack(uint32_t loc, uint32_t entry){
+uint32_t thread_initializeStack(uint32_t loc, uint32_t entry){
 //    loc=loc-sizeof(StackFrame);
     loc=loc-(16*4);
     StackFrame *stack=(StackFrame *)loc;
     stack->psr=0x21000000;
-    stack->link=(uint32_t)proc_exit;
+    stack->link=(uint32_t)thread_exit;
     stack->pc=entry;
 }
 
-void proc_initialize_stacks(void){
-//    proc[0]=proc_initialize_stack(0x10008000,(uint32_t)main00);
-    proc_table[0].base=0x10008000;
-    proc_table[0].privilege=0;  
-    proc_table[0].status=1;
+void thread_initializeThreadTable(void){
+//    thread[0]=thread_initialize_stack(0x10008000,(uint32_t)main00);
+    thread_table[0].base=0x10008000;
+    thread_table[0].privilege=0;  
+    thread_table[0].status=1;
 
-//    proc[1]=proc_initialize_stack(0x10006000,(uint32_t)main01);
-//    proc[2]=proc_initialize_stack(0x10004000,(uint32_t)main02);
-//    proc[3]=proc_initialize_stack(0x10002000,(uint32_t)main03);
+    thread_table[1].base=0x10006000;
+    thread_table[1].stack=thread_initializeStack(0x10006000,(uint32_t)main01);
+    thread_table[1].privilege=0;
+    thread_table[1].status=2;
 
-    proc_table[1].base=0x10006000;
-    proc_table[1].stack=proc_initialize_stack(0x10006000,(uint32_t)main01);
-    proc_table[1].privilege=0;
-    proc_table[1].status=2;
+    thread_table[2].base=0x10004000;
+    thread_table[2].stack=thread_initializeStack(0x10004000,(uint32_t)main02);
+    thread_table[2].privilege=0;
+    thread_table[2].status=1;
 
-    proc_table[2].base=0x10004000;
-    proc_table[2].stack=proc_initialize_stack(0x10004000,(uint32_t)main02);
-    proc_table[2].privilege=0;
-    proc_table[2].status=1;
-
-    proc_table[3].base=0x10002000;
-    proc_table[3].stack=proc_initialize_stack(0x10002000,(uint32_t)main03);
-    proc_table[3].privilege=1;
-    proc_table[3].status=1;
+    thread_table[3].base=0x10002000;
+    thread_table[3].stack=thread_initializeStack(0x10002000,(uint32_t)main03);
+    thread_table[3].privilege=1;
+    thread_table[3].status=1;
 } 
 
 
-void proc_initialize(void){
-    proc_initialize_stacks();
+void thread_initialize(void){
+    thread_initializeThreadTable();
     NVIC_SET_ENABLE.soft0=1;
     NVIC_CLR_PENDING.soft0=1;
-    NVIC_PRIORITY_CTL.soft0=0xF1;
+    NVIC_PRIORITY_CTL.soft0=0xFF;
 }
 
 

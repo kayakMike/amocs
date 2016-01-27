@@ -3,42 +3,30 @@ apply plugin: 'c'
 model {
     toolChains {
         gcc(Gcc) {
-            path "/opt/x-tools/arm-unknown-eabi/bin"
+            path "/opt/x-tools/arm-none-eabi/bin"
             eachPlatform{tools->
-                tools.linker.executable            "arm-unknown-eabi-ld"
-                tools.cCompiler.executable         "arm-unknown-eabi-gcc"
-                tools.assembler.executable         "arm-unknown-eabi-as"
-                tools.staticLibArchiver.executable "arm-unknown-eabi-ar"
+                tools.linker.executable            "arm-none-eabi-gcc"
+                tools.cCompiler.executable         "arm-none-eabi-gcc"
+                tools.assembler.executable         "arm-none-eabi-as"
+                tools.staticLibArchiver.executable "arm-none-eabi-ar"
                 cCompiler.withArguments{args->
                     args << "-g" 
                     args << "-fno-builtin"
-                }
-            }
-            target("stellaris"){
-                linker.withArguments{args->
-                    args << "-T" << "src/stellaris/linker.ld"
-                }
-            }
-            target("netduino2"){
-                linker.withArguments{args->
-                    args << "-T" << "src/netduino2/linker.ld"
+                    args << "-nostdlib"
                 }
             }
             target("lpc1769"){
                 linker.withArguments{args->
-                    args << "-T" << "src/lpc1769/linker.ld"
+                    args << "-T" << "src/lpc17xx/lpc1769.ld"
+                    args << "-nostartfiles"
+//                    args << "-nostdlib"
+//                    args << "-fno-builtin"
                 }
             }
         }
     }
 
     platforms {
-        stellaris {
-            architecture "arm"
-        }
-        netduino2 {
-            architecture "arm"
-        }
         lpc1769 {
             architecture "arm"
         }
@@ -46,48 +34,16 @@ model {
     }
 
     components {
-        stellaris(NativeExecutableSpec) {
-            targetPlatform "stellaris"
-            sources {
-                c {
-                    source {
-                        srcDirs "src/common", "src/cortex-m3","src/stellaris"
-                        include "**/*.c"
-                    }
-                    exportedHeaders {
-                        srcDirs "src/common", "src/cortex-m3"
-                        include "**/*.h"
-                    }
-                }
-            }
-        }
-
-        netduino2(NativeExecutableSpec) {
-            targetPlatform "netduino2"
-            sources {
-                c {
-                    source {
-                        srcDirs "src/common", "src/cortex-m3","src/netduino2"
-                        include "**/*.c"
-                    }
-                    exportedHeaders {
-                        srcDirs "src/common", "src/cortex-m3"
-                        include "**/*.h"
-                    }
-                }
-            }
-        }
-
         lpc1769(NativeExecutableSpec) {
             targetPlatform "lpc1769"
             sources {
                 c {
                     source {
-                        srcDirs "src/common", "src/cortex-m3", "src/lpc1769", "src/lpc1769/hwdef"
+                        srcDirs "src/common", "src/cortex-m3", "src/lpc17xx", "src/lpc17xx/hwdef"
                         include "**/*.c"
                     }
                     exportedHeaders {
-                        srcDirs "src/common", "src/cortex-m3", "src/lpc1769/hwdef", "src/cortex-m3/hwdef"
+                        srcDirs "src/common", "src/cortex-m3", "src/lpc17xx", "src/lpc17xx/hwdef", "src/cortex-m3/hwdef"
                         include "**/*.h"
                     }
                 }
@@ -96,35 +52,19 @@ model {
     }
 }
 
-task emulateNetduino2(type: Exec){
-    commandLine  '/opt/qemu/bin/qemu-system-arm'
-    args  '-machine', 'netduino2', '-cpu', 'cortex-m3', '-kernel', 'build/binaries/netduino2Executable/netduino2', '-nographic', '-s'
-}
-
-task emulateStellaris(type: Exec){
-    commandLine  '/opt/qemu/bin/qemu-system-arm'
-    args  '-machine', 'lm3s6965evb', '-cpu', 'cortex-m3', '-kernel', 'build/binaries/stellarisExecutable/stellaris', '-nographic', '-s'
-}
-
 task lpc1769Hex(type: Exec){
-    commandLine '/opt/x-tools/arm-unknown-eabi/bin/arm-unknown-eabi-objcopy'
+    commandLine '/opt/x-tools/arm-none-eabi/bin/arm-none-eabi-objcopy'
     args '-O', 'ihex', '--strip-debug', 'build/binaries/lpc1769Executable/lpc1769', 'lpc1769.hex'
 }
 
 task lpc1769Binary(type: Exec){
-    commandLine '/opt/x-tools/arm-unknown-eabi/bin/arm-unknown-eabi-objcopy'
+    commandLine '/opt/x-tools/arm-none-eabi/bin/arm-none-eabi-objcopy'
     args '-O', 'binary', '--strip-debug', 'build/binaries/lpc1769Executable/lpc1769', 'lpc1769.bin'
 }
 
-task stellarisBinary(type: Exec){
-    commandLine '/opt/x-tools/arm-unknown-eabi/bin/arm-unknown-eabi-objcopy'
-    args '-O', 'binary', '--strip-debug', 'build/binaries/stellarisExecutable/stellaris', 'stellaris.bin'
-}
-
-
 task lpc1769CreateHex(type: Exec, dependsOn: 'lpc1769Executable'){
     workingDir 'build/binaries/lpc1769Executable'
-    commandLine '/opt/x-tools/arm-unknown-eabi/bin/arm-unknown-eabi-objcopy'
+    commandLine '/opt/x-tools/arm-none-eabi/bin/arm-none-eabi-objcopy'
     args '-O', 'ihex', '--strip-debug', 'lpc1769', 'lpc1769.hex'
 }
 
@@ -182,52 +122,6 @@ task lpc1769StartProgram(type: Exec, dependsOn: 'lpc1769Load'){
         sleep(400)
         isp.write('1')
         reset.write('1')
-   }
+    }
 }
 
-
-/*
-task createMapFile(type: Exec, dependsOn: 'snarfExecutable'){
-    workingDir 'build/binaries/snarfExecutable'
-    executable '/home/base/x-tools/arm-unknown-eabi/bin/arm-unknown-eabi-nm'
-    args  '-f', 'sysv', 'snarf', '-n', '-l'
-    standardOutput = new FileOutputStream("${project.name}.map")
-}
-
-task createHexFile(type: Exec, dependsOn: 'createMapFile'){
-    workingDir 'build/binaries/snarfExecutable'
-    commandLine '/home/base/x-tools/arm-unknown-eabi/bin/arm-unknown-eabi-objcopy'
-    args '-O', 'ihex', '--strip-debug', 'snarf', 'lpc4337.hex'
-}
-
-task loadHexFile(type: Exec, dependsOn: 'createHexFile'){
-    workingDir 'build/binaries/snarfExecutable'
-    executable '/usr/bin/lpc21isp' 
-    args  'lpc4337.hex', '/dev/ttyS2', '115200', '14746'
-}
-
-task startTerminal(type: Exec){
-    executable '/usr/bin/lpc21isp'
-    args  '-termonly', '/dev/ttyS2', '115200', '14746'
-}
-*/
-
-
-
-/*make this into an init script to be run on boot
-task odroidXU4(){
-    File gpioExport=new File("/sys/class/gpio/export")
-    gpioExport.write("19")
-    File resetDir   = new File("sys/class/gpio/gpio19/direction")
-    File resetValue = new File("sys/class/gpio/gpio19/value")
-    gpioResetDir.write("out")
-    gpioResetValue.write("0")
-    gpioExport.write("24")
-    File ispDir   = new File("sys/class/gpio/gpio24/direction")
-    File ispValue = new File("sys/class/gpio/gpio24/value")
-    ispDir.write("out")
-    ispValue.write("1")
-}
-
-
-*/

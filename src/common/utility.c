@@ -1,5 +1,7 @@
 #include "utility.h"
+#include "sysclock.h"
 #include "string.h"
+#include "ucom.h"
 
 void util_sleep(uint32_t msec){
     uint32_t i=1200*msec;
@@ -8,16 +10,19 @@ void util_sleep(uint32_t msec){
     }
 }
 
-void output_system_stats(void){
-    uint32_t core_clock_speed=core_compute_main_clock();
-    uint8_t str[]="\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
-    uart0_send("BASIC SYSTEM STATS! \n\r");
-    uart0_send("    System CPU Clock:  ");
-    uint_to_decimal_string(core_clock_speed,str);
-    uart0_send(str);
-    uart0_send(" ");
-    uint_to_hex_string(core_clock_speed,str);
-    uart0_send(str);
-    uart0_send("\n\r");
+
+void util_outputNumber(uint32_t num){
+    uint8_t str[10];
+    uint_to_decimal_string(num,str);
+    ucom_sendString(UART0,str);
+    ucom_sendString(UART0,"\n\r");
+} 
+
+void util_outputSystemStats(void){
+    uint32_t cpu_clock=sysclock_computeMainClock();
+    ucom_sendString(UART0,"BASIC STATS: \n\r");
+    ucom_sendString(UART0,"\tCPU CLOCK: \n\r");
+    util_outputNumber(cpu_clock);
 }
+
 

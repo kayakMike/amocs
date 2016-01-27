@@ -1,23 +1,67 @@
-#include "micro_types.h"
-#include "gpio.h"
 #include "pinmx.h"
-#include "uart.h"
 #include "clock.h"
-#include "mutex.h"
-#include "system.h"
 #include "power.h"
+#include "uart.h"
+#include "ucom.h"
 
-volatile uint8_t uart0_mutex_lock=0;
+
+void uart0_initialize(void);
+void uart0_send(uint8_t *msg);
+void uart0_send_message(uint8_t *msg, uint32_t len);
+
+void uart2_send(uint8_t *msg);
+void uart2_send_message(uint8_t *msg, uint32_t len);
+void uart2_initialize(void);
+
+void ucom_initializePort(uint8_t port){
+    switch(port){
+        case UART0:
+            uart0_initialize();
+            break;
+        case UART2:
+            uart2_initialize();
+            break;
+        default:
+            //error occured
+            break;
+    }
+}
+
+void ucom_sendString(uint8_t port, uint8_t *msg){
+    switch(port){
+        case UART0:
+            uart0_send(msg);
+            break;
+        case UART2:
+            uart2_send(msg);
+            break;
+        default:
+            //error occured
+            break;
+    }
+}
+
+void ucom_sendMessage(uint8_t port, uint8_t *msg, uint32_t len){
+    switch(port){
+        case UART0:
+            uart0_send_message(msg,len);
+            break;
+        case UART2:
+            uart2_send_message(msg,len);
+            break;
+        default:
+            break;
+    }
+}
+
+
 void uart0_send(uint8_t *msg){
     uint32_t i;
-//    mutex_spinlock(&uart0_mutex_lock);
     for(i=0;msg[i]!='\0';i++){
         while(UART0_LINE_STATUS.tx_hold_empty==0){
-            //spin until UART0 is not busy anymore
         }
         UART0_THR.buffer=msg[i];
     }    
-//    mutex_unlock(&uart0_mutex_lock);
 }
 
 void uart0_send_message(uint8_t *msg, uint32_t len){
@@ -29,6 +73,27 @@ void uart0_send_message(uint8_t *msg, uint32_t len){
         }
     }
 }
+
+
+void uart2_send(uint8_t *msg){
+    uint32_t i;
+    for(i=0;msg[i]!='\0';i++){
+        while(UART2_LINE_STATUS.tx_hold_empty==0){
+        }
+        UART2_THR.buffer=msg[i];
+    }    
+}
+
+void uart2_send_message(uint8_t *msg, uint32_t len){
+    while(len){
+        if(UART2_LINE_STATUS.tx_hold_empty==1){
+            UART2_THR.buffer=*msg;
+            msg++;
+            len--;
+        }
+    }
+}
+
 
 void uart0_initialize(void){
     PIN_FUNC.p0_02=1;
@@ -91,37 +156,3 @@ void uart2_initialize(void){
     UART2_LINE_CTL.divisor_latch=0;    //relock divisors
     UART2_TRANSMIT_ENABLE.tx_enable=1;
 } 
-
-void uart2_send(uint8_t *msg){
-    uint32_t i;
-//    mutex_spinlock(&uart0_mutex_lock);
-    for(i=0;msg[i]!='\0';i++){
-        while(UART2_LINE_STATUS.tx_hold_empty==0){
-            //spin until UART0 is not busy anymore
-        }
-        UART0_THR.buffer=msg[i];
-    }    
-//    mutex_unlock(&uart0_mutex_lock);
-}
-
-void uart2_send_message(uint8_t *msg, uint32_t len){
-    while(len){
-        if(UART2_LINE_STATUS.tx_hold_empty==1){
-            UART2_THR.buffer=*msg;
-            msg++;
-            len--;
-        }
-    }
-}
-
-//  ASSUMPTION:  SYSTEM_CORE_CLOCK is 4MHz
-//    UART0_DLL.buffer=17;
-
-//  ASSUMPTION: SYSTEM_CORE_CLOCK is 120MHz...
-//    Calculation from Data Sheets 
-//    UART0_TRANSMIT_ENABLE.tx_enable=0;
-//    UART0_FRACTIONAL_DIVIDER.divaddval=1;
-//    UART0_FRACTIONAL_DIVIDER.mulval=2;
-//    UART0_DLL.buffer=43;
-//    UART0_DLM.buffer=0;
-

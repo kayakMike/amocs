@@ -23,6 +23,7 @@ typedef struct{
     unsigned timer1       : 1;
     unsigned uart0        : 1;
     unsigned uart1        : 1;
+    unsigned              : 1;
     unsigned pwm1         : 1;
     unsigned i2c0         : 1;
     unsigned spi          : 1;
@@ -38,6 +39,7 @@ typedef struct{
     unsigned qei          : 1;
     unsigned i2c1         : 1;
     unsigned ssp0         : 1;
+    unsigned              : 1; 
     unsigned timer2       : 1;
     unsigned timer3       : 1;
     unsigned uart2        : 1;

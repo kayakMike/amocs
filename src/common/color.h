@@ -10,10 +10,10 @@ typedef struct{
 }RGBColor;
 
 
-RGBColor hsvtorgb(uint8_t hue, uint8_t sat, uint8_t val);
+RGBColor color_convertHSV(uint8_t hue, uint8_t sat, uint8_t val);
 
 
-void color_test_rainbow(uint8_t *pixarray, uint8_t index);
+void color_testRainbow(uint8_t *pixarray, uint8_t index);
 
 
 
