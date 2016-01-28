@@ -13,14 +13,17 @@ model {
                     args << "-g" 
                     args << "-fno-builtin"
                     args << "-nostdlib"
+                    args << "-nostartfiles"
+//                    args << "-O1"
+                    args << "-Os"
                 }
             }
             target("lpc1769"){
                 linker.withArguments{args->
                     args << "-T" << "src/lpc17xx/lpc1769.ld"
                     args << "-nostartfiles"
-//                    args << "-nostdlib"
-//                    args << "-fno-builtin"
+                    args << "-nostdlib"
+                    args << "-fno-builtin"
                 }
             }
         }

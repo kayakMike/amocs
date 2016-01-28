@@ -17,15 +17,11 @@ void isr_sysTick(void){
 
 void systime_initialize(void){
     SYSTICK_CONTROL.clock_source_select =1;
-//    SYSTICK_CURRENT_VALUE.counter_value =(120000-1);
-    SYSTICK_RELOAD_VALUE.counter_value  =(1200000-1);
-
+    SYSTICK_CURRENT_VALUE.counter_value =(16000000-1);
+    SYSTICK_RELOAD_VALUE.counter_value  =(16000000-1);
     SYSTICK_CONTROL.interrupt_enable    =1;
-
-    SYSTEM_INTERRUPT_PRIORITY.sysTick   =0xFF; //lowest priority
+//    SYSTEM_INTERRUPT_PRIORITY.sysTick   =0xFF; //lowest priority
     SYSTICK_CONTROL.counter_enable      =1;
-
-    
 }
 
 uint32_t systime_getSystemCount(void){

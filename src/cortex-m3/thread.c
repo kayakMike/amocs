@@ -1,4 +1,5 @@
 #include "thread.h"
+#include "blink.h"
 #include "nvic.h"
 
 
@@ -33,10 +34,10 @@ typedef struct ThreadEntry{
 
 volatile uint32_t save;
 volatile uint32_t thread_index=0;
-volatile uint32_t thread_total=0;
 
 volatile ThreadEntry thread_table[THREAD_MAX];
 
+uint32_t thread_initializeStack(uint32_t loc, uint32_t entry)__attribute__((optimize("O0")));
 
 //switch context for the main stack pointer
 //need to figure out which stack pointer the current context is using
@@ -45,7 +46,7 @@ volatile ThreadEntry thread_table[THREAD_MAX];
 //    thread mode psp   link register contains FD
 //    handler mode msp  link register contains F1 
 //    ... no tasks should be returning to handler mode, i think...
-void isr_soft0(void){
+void __attribute__((optimize("O0"))) isr_soft0(void){
 
     asm volatile(
         "cmp      %[priv] , #0           \n"
@@ -115,7 +116,7 @@ uint32_t thread_initializeStack(uint32_t loc, uint32_t entry){
     stack->pc=entry;
 }
 
-void thread_initializeThreadTable(void){
+void  thread_initializeThreadTable(void){
 //    thread[0]=thread_initialize_stack(0x10008000,(uint32_t)main00);
     thread_table[0].base=0x10008000;
     thread_table[0].privilege=0;  
@@ -140,9 +141,9 @@ void thread_initializeThreadTable(void){
 
 void thread_initialize(void){
     thread_initializeThreadTable();
-    NVIC_SET_ENABLE.soft0=1;
     NVIC_CLR_PENDING.soft0=1;
-    NVIC_PRIORITY_CTL.soft0=0xFF;
+    NVIC_SET_ENABLE.soft0=1;
+    NVIC_PRIORITY_CTL.soft0=0x1F;
 }
 
 

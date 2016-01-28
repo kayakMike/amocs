@@ -1,6 +1,9 @@
 #include "sysclock.h"
+#include "systime.h"
 #include "ucom.h"
 #include "thread.h"
+#include "blink.h"
+
 
 //these are all referenced in the linker script
 extern uint32_t _bss_start;
@@ -14,20 +17,23 @@ void main(void);
 //private core functions
 void sysinit_initializeData (uint32_t *start, uint32_t *end, uint32_t *mem);
 void sysinit_initializeBSS  (uint32_t *start, uint32_t *end);
+//__attribute__((optimize("O0"))) 
+//void isr_reset(void)__attribute__((interrupt));
 
-//Reset ISR, the main entry point!
 void isr_reset(void){
     sysinit_initializeData(&_data_start,&_data_end,&_sidata);
     sysinit_initializeBSS(&_bss_start,&_bss_end);
     sysclock_setMainClock120MHZ(); 
     
     //initialize drivers
+    blink_initializeOutput(0,20);
     ucom_initializePort(UART0); 
     ucom_initializePort(UART2); 
-
     thread_initialize();
 
     systime_initialize();
+
+
     main00();
 } 
 

@@ -3,11 +3,12 @@
 #include "string.h"
 #include "ucom.h"
 
-void util_sleep(uint32_t msec){
-    uint32_t i=1200*msec;
+uint32_t util_sleep(uint32_t msec){
+    uint32_t i=12000*msec;
     while(i--){
         //noop??
     }
+    return i;
 }
 
 
