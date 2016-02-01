@@ -15,7 +15,7 @@ model {
                     args << "-nostdlib"
                     args << "-nostartfiles"
 //                    args << "-O1"
-                    args << "-Os"
+//                    args << "-Os"
                 }
             }
             target("lpc1769"){

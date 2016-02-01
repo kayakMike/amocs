@@ -1,5 +1,6 @@
 #include "micro_types.h"
 #include "systime.h"
+#include "ucom.h"
 
 void isr_reset      (void) __attribute__((weak,alias("isr_default")));
 void isr_nmi        (void) __attribute__((weak,alias("isr_default")));

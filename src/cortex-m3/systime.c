@@ -2,7 +2,6 @@
 #include "syscontrol.h"
 #include "systick.h"
 #include "thread.h"
-#include "blink.h"
 
 
 volatile uint32_t sys_count=0;

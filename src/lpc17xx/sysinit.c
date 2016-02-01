@@ -29,9 +29,9 @@ void isr_reset(void){
     blink_initializeOutput(0,20);
     ucom_initializePort(UART0); 
     ucom_initializePort(UART2); 
-    thread_initialize();
+//    thread_initialize();
 
-    systime_initialize();
+//    systime_initialize();
 
 
     main00();

@@ -66,6 +66,7 @@ void nrz_send_message(uint8_t *in, uint32_t len){
     uint8_t i=0;
     //spin untill the previous message is transmintting
     while(nrz_xmit_complete==false){
+  
     };
     for(i=0;i<NRZ_MAX;i++){
         byte=i/8;

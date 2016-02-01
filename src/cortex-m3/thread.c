@@ -97,7 +97,7 @@ void __attribute__((optimize("O0"))) isr_soft0(void){
 void thread_triggerContextSwitch(void){
     //brain dead task switcher goes here
     //trigger the interrupt
-    blink_toggleOutput(0,20);
+//    blink_toggleOutput(0,20);
     NVIC_SET_PENDING.soft0=1;
 }
 
