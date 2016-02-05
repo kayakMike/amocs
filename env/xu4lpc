@@ -1,7 +1,8 @@
 #!/bin/bash
-# sets up the relevant GPIOs and UART0 connection so all users on the odroid
+# sets up the relevant GPIOs and UART0 connection so all users on the odroid-xu4
 # can build and deploy to the lpc1769 after boot
-# intended to be a boot script
+# intended to be installed as a boot script on an odroid-xu4 development system
+# 
 
 
 start (){
