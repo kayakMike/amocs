@@ -3,7 +3,7 @@ apply plugin: 'c'
 model {
     toolChains {
         gcc(Gcc) {
-            path "/opt/x-tools/arm-none-eabi/bin"
+            path "/home/mike/Software/x-tools/arm-none-eabi/bin"
             eachPlatform{tools->
                 tools.linker.executable            "arm-none-eabi-gcc"
                 tools.cCompiler.executable         "arm-none-eabi-gcc"
@@ -14,8 +14,8 @@ model {
                     args << "-fno-builtin"
                     args << "-nostdlib"
                     args << "-nostartfiles"
-//                    args << "-O1"
-//                    args << "-Os"
+                    //args << "-O1"
+                    //args << "-Os"
                 }
             }
             target("lpc1769"){
@@ -55,21 +55,20 @@ model {
     }
 }
 
-task lpc1769Hex(type: Exec){
-    commandLine '/opt/x-tools/arm-none-eabi/bin/arm-none-eabi-objcopy'
-    args '-O', 'ihex', '--strip-debug', 'build/binaries/lpc1769Executable/lpc1769', 'lpc1769.hex'
-}
-
-task lpc1769Binary(type: Exec){
-    commandLine '/opt/x-tools/arm-none-eabi/bin/arm-none-eabi-objcopy'
-    args '-O', 'binary', '--strip-debug', 'build/binaries/lpc1769Executable/lpc1769', 'lpc1769.bin'
-}
-
 task lpc1769CreateHex(type: Exec, dependsOn: 'lpc1769Executable'){
-    workingDir 'build/binaries/lpc1769Executable'
-    commandLine '/opt/x-tools/arm-none-eabi/bin/arm-none-eabi-objcopy'
+    workingDir 'build/exe/lpc1769'
+    commandLine '/home/mike/Software/x-tools/arm-none-eabi/bin/arm-none-eabi-objcopy'
     args '-O', 'ihex', '--strip-debug', 'lpc1769', 'lpc1769.hex'
 }
+
+task lpc1769ManualLoad(type: Exec, dependsOn: 'lpc1769CreateHex'){
+    executable '/home/mike/Software/x-tools/lpc21isp' 
+    workingDir 'build/exe/lpc1769'
+    executable '/home/mike/Software/x-tools/lpc21isp' 
+    args  'lpc1769.hex', '/dev/ttyUSB0', '115200', '14746'
+}
+
+
 
 task lpc1769Reset(dependsOn: 'lpc1769CreateHex'){
 
@@ -94,8 +93,8 @@ task lpc1769StartISP(dependsOn: 'lpc1769CreateHex'){
 }
 
 task lpc1769Load(type: Exec, dependsOn: 'lpc1769CreateHex'){
-    workingDir 'build/binaries/lpc1769Executable'
-    executable '/opt/x-tools/lpc21isp' 
+    workingDir 'build/exe/lpc1769'
+    executable '/home/mike/Software/x-tools/lpc21isp' 
     args  'lpc1769.hex', '/dev/ttySAC0', '115200', '14746'
 
     doFirst {
@@ -113,8 +112,6 @@ task lpc1769Load(type: Exec, dependsOn: 'lpc1769CreateHex'){
         isp.write('1')
         reset.write('1')
     }
-
-
 }
 
 task lpc1769StartProgram(type: Exec, dependsOn: 'lpc1769Load'){

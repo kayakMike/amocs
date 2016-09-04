@@ -66,7 +66,7 @@ void main00(void){
                      0x00,0x00,0x00};
     while(true){
 //        ucom_sendString(UART2,"UART2 test OK: \n\r");
-        ucom_sendString(UART0,"neopixel test  OK: \n\r");
+        ucom_sendString(UART0,"new test compile OK: \n\r");
 //        ucom_sendString(UART2,"UART2 test OK: \n\r");
         nrz_send_message(pix,12);
         util_sleep(10);
