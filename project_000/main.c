@@ -1,0 +1,20 @@
+#include "types.h"
+
+//from the lpc1769 data sheet
+#define PORT4_DIR (*(volatile uint32_t *)(0x2009C080))
+#define PORT4_SET (*(volatile uint32_t *)(0x2009C098))
+#define PORT4_CLR (*(volatile uint32_t *)(0x2009C09C))
+#define PIN28 (1<<28)
+
+int main(int argc, char **argv)
+{
+    //simplest micro controller program.
+    //blink a gpio GPIO
+    PORT4_DIR = PORT4_DIR | PIN28;
+    while(TRUE)
+    {
+        PORT4_CLR = PIN28;
+        PORT4_SET = PIN28;
+    }
+    return 0;
+}

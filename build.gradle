@@ -20,7 +20,7 @@ model {
             }
             target("lpc1769"){
                 linker.withArguments{args->
-                    args << "-T" << "src/lpc17xx/lpc1769.ld"
+                    args << "-T" << "source/lpc1769.ld"
                     args << "-nostartfiles"
                     args << "-nostdlib"
                     args << "-fno-builtin"
@@ -42,12 +42,8 @@ model {
             sources {
                 c {
                     source {
-                        srcDirs "src/common", "src/cortex-m3", "src/lpc17xx", "src/lpc17xx/hwdef"
+                        srcDirs "source" 
                         include "**/*.c"
-                    }
-                    exportedHeaders {
-                        srcDirs "src/common", "src/cortex-m3", "src/lpc17xx", "src/lpc17xx/hwdef", "src/cortex-m3/hwdef"
-                        include "**/*.h"
                     }
                 }
             }
