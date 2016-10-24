@@ -1,4 +1,5 @@
 #include "types.h"
+#include "bgpio.h"
 
 //from the lpc1769 data sheet
 #define PORT4_DIR (*(volatile uint32_t *)(0x2009C080))
@@ -22,102 +23,24 @@ void pll0_disconnect(void);
 void blink_loop(void);
 void simple_sleep(uint32_t loops);
 void simple_blink(uint32_t *dir, uint32_t *set, uint32_t *clr);
-void initialize_hd44780(void);
 
+void gpio_on(void);
+
+//void initialize_hd44780(void);
 //bit band for GPIO port4 pin 28
-#define P4_28DIR *((volatile uint32_t *)((0x9C080*0x20) + (4*28) + 0x22000000))
-#define P4_28SET *((volatile uint32_t *)((0x9C098*0x20) + (4*28) + 0x22000000))
-#define P4_28CLR *((volatile uint32_t *)((0x9C09C*0x20) + (4*28) + 0x22000000))
 
-#define B428DIR  (uint32_t *)((0x9C080*0x20) + (4*28) + 0x22000000) 
-#define B428SET  (uint32_t *)((0x9C098*0x20) + (4*28) + 0x22000000) 
-#define B428CLR  (uint32_t *)((0x9C09C*0x20) + (4*28) + 0x22000000) 
-
-#define B429DIR  (uint32_t *)((0x9C080*0x20) + (4*29) + 0x22000000) 
-#define B429SET  (uint32_t *)((0x9C098*0x20) + (4*29) + 0x22000000) 
-#define B429CLR  (uint32_t *)((0x9C09C*0x20) + (4*29) + 0x22000000) 
-
-#define B325DIR  (uint32_t *)((0x9C060*0x20) + (4*25) + 0x22000000) 
-#define B325SET  (uint32_t *)((0x9C078*0x20) + (4*25) + 0x22000000) 
-#define B325CLR  (uint32_t *)((0x9C07C*0x20) + (4*25) + 0x22000000) 
-
-#define B127DIR  (uint32_t *)((0x9C020*0x20) + (4*27) + 0x22000000) 
-#define B127SET  (uint32_t *)((0x9C038*0x20) + (4*27) + 0x22000000) 
-#define B127CLR  (uint32_t *)((0x9C03C*0x20) + (4*27) + 0x22000000) 
-
-#define B124DIR  (uint32_t *)((0x9C020*0x20) + (4*24) + 0x22000000) 
-#define B124SET  (uint32_t *)((0x9C038*0x20) + (4*24) + 0x22000000) 
-#define B124CLR  (uint32_t *)((0x9C03C*0x20) + (4*24) + 0x22000000) 
-
-#define B121DIR  (uint32_t *)((0x9C020*0x20) + (4*21) + 0x22000000) 
-#define B121SET  (uint32_t *)((0x9C038*0x20) + (4*21) + 0x22000000) 
-#define B121CLR  (uint32_t *)((0x9C03C*0x20) + (4*21) + 0x22000000) 
-
-#define B118DIR  (uint32_t *)((0x9C020*0x20) + (4*18) + 0x22000000) 
-#define B118SET  (uint32_t *)((0x9C038*0x20) + (4*18) + 0x22000000) 
-#define B118CLR  (uint32_t *)((0x9C03C*0x20) + (4*18) + 0x22000000) 
-
-#define B019DIR  (uint32_t *)((0x9C000*0x20) + (4*19) + 0x22000000) 
-#define B019SET  (uint32_t *)((0x9C018*0x20) + (4*19) + 0x22000000) 
-#define B019CLR  (uint32_t *)((0x9C01C*0x20) + (4*19) + 0x22000000) 
-
-#define B326DIR  (uint32_t *)((0x9C060*0x20) + (4*26) + 0x22000000) 
-#define B326SET  (uint32_t *)((0x9C078*0x20) + (4*26) + 0x22000000) 
-#define B326CLR  (uint32_t *)((0x9C07C*0x20) + (4*26) + 0x22000000) 
-
-#define B123DIR  (uint32_t *)((0x9C020*0x20) + (4*23) + 0x22000000) 
-#define B123SET  (uint32_t *)((0x9C038*0x20) + (4*23) + 0x22000000) 
-#define B123CLR  (uint32_t *)((0x9C03C*0x20) + (4*23) + 0x22000000) 
-
-#define B120DIR  (uint32_t *)((0x9C020*0x20) + (4*20) + 0x22000000) 
-#define B120SET  (uint32_t *)((0x9C038*0x20) + (4*20) + 0x22000000) 
-#define B120CLR  (uint32_t *)((0x9C03C*0x20) + (4*20) + 0x22000000) 
-
-
-void initialize_hd44780(void)
-{
-    *B429DIR = 1; //7
-    *B325DIR = 1; //6
-    *B127DIR = 1; //5 
-    *B124DIR = 1; //4 
-    *B121DIR = 1; //3 
-    *B118DIR = 1; //2
-    *B019DIR = 1; //1
-    *B326DIR = 1; //0
-    *B123DIR = 1; //en
-    *B120DIR = 1; //rs
-
-    *B326SET = 1;
-    *B123SET = 1;
-    simple_sleep(6000000);
-    *B123CLR = 1;  
-    simple_sleep(6000000);
-    *B326CLR = 1;
-
-    *B326SET = 1;
-    *B019SET = 1;
-    *B118SET = 1;
-    *B123SET = 1;
-    simple_sleep(6000000);
-    *B123CLR = 1;  
-    simple_sleep(6000000);
-    *B326SET = 0;
-    *B019SET = 0;
-    *B118SET = 0;
-}
 
 int main(int argc, char **argv)
 {
-    sclk_configure(1, 14, 0, 2); 
-    initialize_hd44780();
-    simple_blink(B428DIR, B428SET, B428CLR);
-//    P4_28DIR = 1;
-//    while(TRUE){
-//        P4_28CLR = 1;
-//        simple_sleep(40000);
-//        P4_28SET = 1;
-//        simple_sleep(40000);
-//    }
+    sclk_configure(1, 14, 0, 2);
+    //B020DIR = 1;
+    P0DIR = (131072 - 1); 
+    uint32_t index = 0;
+    while(TRUE){
+        simple_sleep(600000);
+        P0VAL = index;
+        index++;
+    }
     return 0;
 }
 
@@ -167,6 +90,14 @@ void blink_loop(void)
     );
 
 }
+
+//    P4_28DIR = 1;
+//    while(TRUE){
+//        P4_28CLR = 1;
+//        simple_sleep(40000);
+//        P4_28SET = 1;
+//        simple_sleep(40000);
+//    }
 
 
 
@@ -325,3 +256,37 @@ void sclk_configure(uint8_t clk_select, uint16_t m_select, uint8_t n_select, uin
     pll0_enable();
     pll0_connect();
 }
+
+/*
+void initialize_hd44780(void)
+{
+    *B429DIR = 1; //7
+    *B325DIR = 1; //6
+    *B127DIR = 1; //5 
+    *B124DIR = 1; //4 
+    *B121DIR = 1; //3 
+    *B118DIR = 1; //2
+    *B019DIR = 1; //1
+    *B326DIR = 1; //0
+    *B123DIR = 1; //en
+    *B120DIR = 1; //rs
+
+    *B326SET = 1;
+    *B123SET = 1;
+    simple_sleep(6000000);
+    *B123CLR = 1;  
+    simple_sleep(6000000);
+    *B326CLR = 1;
+
+    *B326SET = 1;
+    *B019SET = 1;
+    *B118SET = 1;
+    *B123SET = 1;
+    simple_sleep(6000000);
+    *B123CLR = 1;  
+    simple_sleep(6000000);
+    *B326SET = 0;
+    *B019SET = 0;
+    *B118SET = 0;
+}
+*/

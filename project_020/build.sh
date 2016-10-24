@@ -18,5 +18,5 @@ $TOOLS/arm-none-eabi-gcc -g -fno-builtin -nostdlib -nostartfiles -T lpc1769.ld b
 /home/mike/Software/x-tools/arm-none-eabi/bin/arm-none-eabi-objcopy -O ihex image.elf image.hex
 
 #LOAD
-/home/mike/Software/x-tools/lpc21isp image.hex /dev/ttyUSB0 115200 14746
+/home/mike/Software/x-tools/lpc21isp image.hex /dev/ttyUSB5 115200 14746
 
