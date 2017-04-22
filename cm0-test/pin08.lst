@@ -1,0 +1,43 @@
+Bit Symbol Value Description Reset
+value
+2:0 - Reserved. 0
+4:3 MODE Selects function mode (on-chip pull-up/pull-down resistor
+control).
+10
+0x0 Inactive (no pull-down/pull-up resistor enabled).
+0x1 Pull-down resistor enabled.
+0x2 Pull-up resistor enabled.
+0x3 Repeater mode.
+5 HYS Hysteresis. 0
+0 Disable.
+1 Enable.
+6 INV Invert input 0
+0 Input not inverted (HIGH on pin reads as 1; LOW on pin reads
+as 0).
+1 Input inverted (HIGH on pin reads as 0, LOW on pin reads as
+1).
+9:7 - - Reserved. 001
+10 OD Open-drain mode. 0
+0 Disable.
+1 Open-drain mode enabled.
+Remark: This is not a true open-drain mode.
+12:11 S_MODE Digital filter sample mode. 0
+0x0 Bypass input filter.
+0x1 1 clock cycle. Input pulses shorter than one filter clock are
+rejected.
+0x2 2 clock cycles. Input pulses shorter than two filter clocks are
+rejected.
+0x3 3 clock cycles. Input pulses shorter than three filter clocks are
+rejected.
+15:13 CLK_DIV Select peripheral clock divider for input filter sampling clock.
+Value 0x7 is reserved.
+0
+0x0 IOCONCLKDIV0.
+0x1 IOCONCLKDIV1.
+0x2 IOCONCLKDIV2.
+0x3 IOCONCLKDIV3.
+0x4 IOCONCLKDIV4.
+0x5 IOCONCLKDIV5.
+0x6 IOCONCLKDIV6.
+31:16 - - Reserved. 0
+

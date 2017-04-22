@@ -1,0 +1,26 @@
+0  acmp_i1
+1  acmp_i2
+2  acmp_i3
+3  acmp_i4
+4  swclk
+5  swdio
+6  xtalin
+7  xtalout
+8  resetn
+9  clkin 
+10 vddcmp
+11 i2c0_sda
+12 i2c0_scl
+13 adc_0
+14 adc_1
+15 adc_2
+16 adc_3
+17 adc_4
+18 adc_5
+19 adc_6
+20 adc_7
+21 adc_8
+22 adc_9
+23 adc_10
+24 adc_11  
+31:25 - Reserved. 1
