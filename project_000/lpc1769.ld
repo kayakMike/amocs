@@ -16,34 +16,32 @@ MEMORY
 /* stack_address = ORIGIN(sram) + LENGTH(sram); */
 
 SECTIONS{
-    .startup ORIGIN(flash) :
-    {
-        startup.o(.stack_address)
-        startup.o(.isr_table)
-    }
+
     .text : 
     {
+        KEEP(*(.isr_table))
         *(.text)
         *(.rodata)
-    }
+    } > flash
     _initial_data = .; 
-    . = ALIGN(4);
 
     /* now lets startup the RAM */
     /*. = ORIGIN(sram0)         */
-    .data ORIGIN(sram0) : AT(_initial_data)
+    .data  : AT(_initial_data)
     {
         _data = . ;
         *(.data)
+        . = ALIGN(4);
+        _data_end = .;
         _data_size = SIZEOF(.data) ;
-    }
+    } > sram0
 
     .bss :
     {
         _bss = . ;
         *(.bss)
         _bss_size = SIZEOF(.bss);
-    } 
+    } > sram0
 }
 
 
@@ -84,4 +82,8 @@ SECTIONS{
     .rodata : { 
         *(.rodata*)
     } > flash
+
+
+
+
    */

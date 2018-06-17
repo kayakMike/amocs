@@ -13,7 +13,7 @@ extern size_t  _data_size;
 
 //void *stack_address __attribute__ (section(".startup")) = STACK_ADDRESS;
 
-void *stack_address = STACK_ADDRESS;
+void *stack_address __attribute__ ((section(".stack_address"))) = STACK_ADDRESS;
 void main(uint32_t argc, uint8_t **argv);
 
 
@@ -21,8 +21,9 @@ void main(uint32_t argc, uint8_t **argv);
 // externvoid *system_stack; 
 //the attribute links to the "vectors" location described in the linker script
 //void (*isr_table[ISR_TABLE_LENGTH])(void) __attribute__ ((section(".startup")))={
-void (*isr_table[ISR_TABLE_LENGTH])(void) =
+void (*isr_table[ISR_TABLE_LENGTH])(void) __attribute__ ((section(".isr_table"))) =
 {
+    (void *)(0x10002000), //    0
     isr_reset,            //    1       
     isr_nmi,              //    2 
     isr_hardfault,        //    3 
@@ -85,8 +86,7 @@ void (*isr_table[ISR_TABLE_LENGTH])(void) =
     NULL,                 //    60
     NULL,                 //    61
     NULL,                 //    62
-    NULL,                 //    63
-    NULL                  //    64
+    NULL                  //    63
 };
 
 
