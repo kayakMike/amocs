@@ -13,77 +13,46 @@ MEMORY
 
 /*TODO: change this to support the Memory protection Unit */
 /*for now, just put the kernel stack way at the end of the sram bank */
-/* stack_address = ORIGIN(sram) + LENGTH(sram); */
 
 SECTIONS{
 
+    .startup :
+    {
+        *(.stack_init)
+        *(.isr_table)
+    } > flash
+
     .text : 
     {
-        KEEP(*(.isr_table))
+        startup.o(.text)
         *(.text)
         *(.rodata)
+        . = ALIGN(4);
     } > flash
-    _initial_data = .; 
+    _init_data = . ; 
 
-    /* now lets startup the RAM */
-    /*. = ORIGIN(sram0)         */
-    .data  : AT(_initial_data)
+    /* now lets startup the RAM  that needs initial values*/
+    /* below section pretty much means the image in flash will have all the initial pieces of data
+    *  but the program is linked to pull the data memory locations from the sram0
+    */
+    .data  : AT(_init_data)
     {
-        _data = . ;
+        _data_start = . ;
         *(.data)
         . = ALIGN(4);
-        _data_end = .;
-        _data_size = SIZEOF(.data) ;
+        _data_end = . ;
     } > sram0
 
     .bss :
     {
-        _bss = . ;
+        _bss_start = . ;
         *(.bss)
-        _bss_size = SIZEOF(.bss);
+        _bss_end = . ;
     } > sram0
+
+    PROVIDE(data_size = _data_end - _data_start);
+    _bss_size  = SIZEOF(.bss);
 }
 
-
-/*
-    _sidata = .;
-    .data : AT (_sidata){
-        _data_start = .;
-        *(vtable)
-        *(.data*)
-        . = ALIGN (4);
-        _data_end = .;
-    } > SRAM
-
-    .bss : {
-        . = ALIGN(4);
-        _bss_start = .;
-        *(.bss*)
-        *(COMMON)
-        . = ALIGN(4);
-        _bss_end = .;
-    } > SRAM
-   
-
-    .stack_address :
-    {
-        *(*.stack_address)
-    } > flash
-
-    .isr_table : 
-    {
-        KEEP(*(*.isr_table .isr_table.*))
-    } > flash
-
-    .text : {
-        *(.text)
-    } > flash
-        
-    .rodata : { 
-        *(.rodata*)
-    } > flash
-
-
-
-
-   */
+/*_data_size = SIZEOF(.data) ;*/
+/*_bss_size = SIZEOF(.bss);*/

@@ -1,0 +1,186 @@
+
+Allocating common symbols
+Common symbol       size              file
+
+array               0x80              main.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+flash            0x00000000         0x00080000         xr
+sram0            0x10000000         0x00008000         xrw
+sram1            0x2007c000         0x00004000         xrw
+sram2            0x20080000         0x00004000         xrw
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+
+.startup        0x00000000      0x104
+ *(.stack_init)
+ .stack_init    0x00000000        0x4 startup.o
+                0x00000000                stack_init
+ *(.isr_table)
+ .isr_table     0x00000004      0x100 startup.o
+                0x00000004                isr_table
+
+.text           0x00000104      0x184
+ startup.o(.text)
+ .text          0x00000104       0x64 startup.o
+                0x00000104                isr_uart3
+                0x00000104                isr_i2c1
+                0x00000104                isr_timer0
+                0x00000104                isr_soft0
+                0x00000104                isr_i2c0
+                0x00000104                isr_ext3
+                0x00000104                isr_watchdog
+                0x00000104                isr_pendsv
+                0x00000104                isr_ext2
+                0x00000104                isr_nmi
+                0x00000104                isr_ssp0
+                0x00000104                isr_pll0
+                0x00000104                isr_ssp1
+                0x00000104                isr_timer1
+                0x00000104                isr_uart2
+                0x00000104                isr_usagefault
+                0x00000104                isr_i2s
+                0x00000104                isr_hardfault
+                0x00000104                isr_i2c2
+                0x00000104                isr_uart0
+                0x00000104                isr_pmw
+                0x00000104                isr_bod
+                0x00000104                isr_mcpwm
+                0x00000104                isr_uart1
+                0x00000104                isr_memmanage
+                0x00000104                isr_adc
+                0x00000104                isr_debugmon
+                0x00000104                isr_default
+                0x00000104                isr_enet
+                0x00000104                isr_sysTick
+                0x00000104                isr_can
+                0x00000104                isr_rit
+                0x00000104                isr_ext0
+                0x00000104                isr_rtc
+                0x00000104                isr_canact
+                0x00000104                isr_usb
+                0x00000104                isr_dma
+                0x00000104                isr_timer2
+                0x00000104                isr_qei
+                0x00000104                isr_timer3
+                0x00000104                isr_svc
+                0x00000104                isr_ext1
+                0x00000104                isr_busfault
+                0x00000104                isr_usbact
+                0x00000104                isr_pll1
+                0x00000104                isr_spi
+                0x0000010a                isr_reset
+ *(.text)
+ .text          0x00000168       0x7c meminit.o
+                0x00000168                memcpy
+                0x000001a8                memset
+ .text          0x000001e4       0x94 main.o
+                0x000001e4                delay
+                0x00000206                main
+ *(.rodata)
+ .rodata        0x00000278        0xd main.o
+                0x00000278                string
+                0x00000288                . = ALIGN (0x4)
+ *fill*         0x00000285        0x3 
+                0x00000288                _init_data = .
+
+.glue_7         0x00000288        0x0
+ .glue_7        0x00000288        0x0 linker stubs
+
+.glue_7t        0x00000288        0x0
+ .glue_7t       0x00000288        0x0 linker stubs
+
+.vfp11_veneer   0x00000288        0x0
+ .vfp11_veneer  0x00000288        0x0 linker stubs
+
+.v4_bx          0x00000288        0x0
+ .v4_bx         0x00000288        0x0 linker stubs
+
+.iplt           0x00000288        0x0
+ .iplt          0x00000288        0x0 startup.o
+
+.rel.dyn        0x00000288        0x0
+ .rel.iplt      0x00000288        0x0 startup.o
+
+.data           0x10000000        0x0 load address 0x00000288
+                0x10000000                _data_start = .
+ *(.data)
+ .data          0x10000000        0x0 startup.o
+ .data          0x10000000        0x0 meminit.o
+ .data          0x10000000        0x0 main.o
+                0x10000000                . = ALIGN (0x4)
+                0x10000000                _data_end = .
+
+.igot.plt       0x10000000        0x0 load address 0x00000288
+ .igot.plt      0x10000000        0x0 startup.o
+
+.bss            0x10000000       0x80 load address 0x00000288
+                0x10000000                _bss_start = .
+ *(.bss)
+ .bss           0x10000000        0x0 startup.o
+ .bss           0x10000000        0x0 meminit.o
+ .bss           0x10000000        0x0 main.o
+                0x10000000                _bss_end = .
+ COMMON         0x10000000       0x80 main.o
+                0x10000000                array
+                [!provide]                PROVIDE (data_size, (_data_end - _data_start))
+                0x00000080                _bss_size = SIZEOF (.bss)
+LOAD meminit.o
+LOAD startup.o
+LOAD main.o
+OUTPUT(image.elf elf32-littlearm)
+
+.debug_info     0x00000000      0x37f
+ .debug_info    0x00000000      0x122 startup.o
+ .debug_info    0x00000122      0x121 meminit.o
+ .debug_info    0x00000243      0x13c main.o
+
+.debug_abbrev   0x00000000      0x21d
+ .debug_abbrev  0x00000000       0xc3 startup.o
+ .debug_abbrev  0x000000c3       0x95 meminit.o
+ .debug_abbrev  0x00000158       0xc5 main.o
+
+.debug_aranges  0x00000000       0x60
+ .debug_aranges
+                0x00000000       0x20 startup.o
+ .debug_aranges
+                0x00000020       0x20 meminit.o
+ .debug_aranges
+                0x00000040       0x20 main.o
+
+.debug_line     0x00000000      0x136
+ .debug_line    0x00000000       0x55 startup.o
+ .debug_line    0x00000055       0x73 meminit.o
+ .debug_line    0x000000c8       0x6e main.o
+
+.debug_str      0x00000000      0x199
+ .debug_str     0x00000000      0x13f startup.o
+                                0x158 (size before relaxing)
+ .debug_str     0x0000013f       0x2b meminit.o
+                                0x104 (size before relaxing)
+ .debug_str     0x0000016a       0x2f main.o
+                                0x110 (size before relaxing)
+
+.comment        0x00000000       0x2e
+ .comment       0x00000000       0x2e startup.o
+                                 0x2f (size before relaxing)
+ .comment       0x0000002e       0x2f meminit.o
+ .comment       0x0000002e       0x2f main.o
+
+.ARM.attributes
+                0x00000000       0x2d
+ .ARM.attributes
+                0x00000000       0x2d startup.o
+ .ARM.attributes
+                0x0000002d       0x2d meminit.o
+ .ARM.attributes
+                0x0000005a       0x2d main.o
+
+.debug_frame    0x00000000      0x100
+ .debug_frame   0x00000000       0x48 startup.o
+ .debug_frame   0x00000048       0x60 meminit.o
+ .debug_frame   0x000000a8       0x58 main.o

@@ -6,6 +6,10 @@
 #define PORT4_CLR (*(volatile uint32_t *)(0x2009C09C))
 #define PIN28 (1<<28)
 
+volatile uint32_t array[32];
+
+const char string[] = "Hello World!";
+
 uint32_t delay(uint32_t value){
     while(value){
         value--;
@@ -18,12 +22,17 @@ int main(int argc, char **argv)
     //simplest micro controller program.
     //blink a gpio GPIO
     PORT4_DIR = PORT4_DIR | PIN28;
+
+    uint8_t i = 0;
     while(TRUE)
     {
         PORT4_CLR = PIN28;
-        delay(100000000);
+        delay(100000);
         PORT4_SET = PIN28;
-	    delay(100000000);
+	    delay(100000);
+        //meaningless junk to see impact on linker with the volatile global 
+        i = (i + 1)%32;
+        array[i]++;
     }
     return 0;
 }

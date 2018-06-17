@@ -8,7 +8,7 @@ $TOOLS/arm-none-eabi-gcc -c -g -fno-builtin -nostdlib -nostartfiles startup.c
 $TOOLS/arm-none-eabi-gcc -c -g -fno-builtin -nostdlib -nostartfiles main.c 
 
 #LINK
-$TOOLS/arm-none-eabi-gcc -g -fno-builtin -nostdlib -nostartfiles -T lpc1769.ld meminit.o startup.o main.o -o image.elf
+$TOOLS/arm-none-eabi-ld  -g -nostdlib -nostartfiles -M -T lpc1769.ld meminit.o startup.o main.o -o image.elf > image.map
 
 #REFORMAT
 $TOOLS/arm-none-eabi-objcopy -O ihex image.elf image.hex

@@ -5,25 +5,15 @@
 // these are all referenced in the linker script
 // and describe the bss and data sections
 //
-extern void   *_bss;
-extern size_t  _bss_size;
-extern void   *_initial_data;
-extern void   *_data;
-extern size_t  _data_size;
 
-//void *stack_address __attribute__ (section(".startup")) = STACK_ADDRESS;
-
-void *stack_address __attribute__ ((section(".stack_address"))) = STACK_ADDRESS;
 void main(uint32_t argc, uint8_t **argv);
 
-
 // stack init is obtained in the linker script
-// externvoid *system_stack; 
-//the attribute links to the "vectors" location described in the linker script
-//void (*isr_table[ISR_TABLE_LENGTH])(void) __attribute__ ((section(".startup")))={
-void (*isr_table[ISR_TABLE_LENGTH])(void) __attribute__ ((section(".isr_table"))) =
+void *stack_init __attribute__((section(".stack_init"))) = (void *)0x10002000;
+
+//the attribute links to the "" location described in the linker script
+void (*isr_table[ISR_TABLE_LENGTH])(void) __attribute__((section(".isr_table"))) =
 {
-    (void *)(0x10002000), //    0
     isr_reset,            //    1       
     isr_nmi,              //    2 
     isr_hardfault,        //    3 
@@ -46,8 +36,8 @@ void (*isr_table[ISR_TABLE_LENGTH])(void) __attribute__ ((section(".isr_table"))
     isr_timer3,           // 4  20 0x50 Timer 3 Match 0-3 Capture 0-1
     isr_uart0,            // 5  21 0x54 UART0 Rx Line Status (RLS) Transmit Holding Register Empty (THRE) Rx Data Available (RDA) Character Time-out Indicator (CTI) End of Auto-Baud (ABEO) Auto-Baud Time-Out (ABTO)
     isr_uart1,            // 6  22 0x58 UART1 Rx Line Status (RLS) Transmit Holding Register Empty (THRE) Rx Data Available (RDA) Character Time-out Indicator (CTI) End of Auto-Baud (ABEO) Auto-Baud Time-Out (ABTO)
-    isr_uart2,            // 7  23 0x5C UART 2 Rx Line Status (RLS) Transmit Holding Register Empty (THRE) Rx Data Available (RDA) Character Time-out Indicator (CTI) End of Auto-Baud (ABEO) Auto-Baud Time-Out (ABTO)
-    isr_uart3,            // 8  24 0x60 UART 3 Rx Line Status (RLS) Transmit Holding Register Empty (THRE) Rx Data Available (RDA) Character Time-out Indicator (CTI) End of Auto-Baud (ABEO) Auto-Baud Time-Out (ABTO)
+    isr_uart2,            // 7  23 0x5C UART2 Rx Line Status (RLS) Transmit Holding Register Empty (THRE) Rx Data Available (RDA) Character Time-out Indicator (CTI) End of Auto-Baud (ABEO) Auto-Baud Time-Out (ABTO)
+    isr_uart3,            // 8  24 0x60 UART3 Rx Line Status (RLS) Transmit Holding Register Empty (THRE) Rx Data Available (RDA) Character Time-out Indicator (CTI) End of Auto-Baud (ABEO) Auto-Baud Time-Out (ABTO)
     isr_pmw,              // 9  25 0x64 PWM1 Match 0 - 6 of PWM1 Capture 0-1 of PWM1
     isr_i2c0,             // 10 26 0x68 I2C0 SI (state change)
     isr_i2c1,             // 11 27 0x6C I2C1 SI (state change)
@@ -86,28 +76,33 @@ void (*isr_table[ISR_TABLE_LENGTH])(void) __attribute__ ((section(".isr_table"))
     NULL,                 //    60
     NULL,                 //    61
     NULL,                 //    62
+    NULL,                 //    63
     NULL                  //    63
 };
 
-
-void isr_default(void){
+void isr_default(void)
+{
     while(TRUE){
     }
 }
-
-
 
 /*  The system is started in the isr reset handler
  * 
  */
 void isr_reset(void)
 {
-    memcpy(_data, _initial_data, _data_size);
-    memset(_bss, 0, _bss_size);
 
-    //init_data(&_data_start, &_data_end, &_sidata);
-    //init_bss(&_bss_start, &_bss_end);
-    //call main
+    extern void *_init_data;
+    extern void *_data_start;
+    extern void *_data_end;
+    size_t data_size = _data_end - _data_start;
+    memcpy(_data_start, _init_data, data_size);
+
+    extern void *_bss_start;
+    extern void *_bss_end;
+    size_t bss_size = _bss_end - _bss_start;
+    memset(_bss_start , 0, bss_size);
+
     main(0, NULL);
     while(TRUE)
     {
@@ -115,4 +110,3 @@ void isr_reset(void)
         //this is what the system does if main ever exits
     }
 } 
-
