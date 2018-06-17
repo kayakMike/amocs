@@ -1,20 +1,47 @@
+OUTPUT_FORMAT ("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
 /*ENTRY(isr_reset)*/
-
-MEMORY{
-    FLASH (rx)      : ORIGIN = 0x00000000, LENGTH = 512K
-    SRAM (rwx)      : ORIGIN = 0x10000000, LENGTH = 32K
-    ahb_sram0 (rwx) : ORIGIN = 0x2007C000, LENGTH = 16k
-    ahb_sram1 (rwx) : ORIGIN = 0x20080000, LENGTH = 16k
+MEMORY
+{
+    /* Non Volatile Memory */
+    flash (rx)  : ORIGIN = 0x00000000, LENGTH = 512K
+    /* Main sram bank */
+    sram0 (rwx) : ORIGIN = 0x10000000, LENGTH = 32K
+    /* advanced high performance bus ram banks */
+    sram1 (rwx) : ORIGIN = 0x2007C000, LENGTH = 16k
+    sram2 (rwx) : ORIGIN = 0x20080000, LENGTH = 16k
 }
 
-_stack_init = ORIGIN(SRAM)+LENGTH(SRAM);
-SECTIONS{
-    .text : {
-        KEEP(*(.vectors))
-        *(.text*)
-        *(.rodata*)
-    } >FLASH
+/*TODO: change this to support the Memory protection Unit */
+/*for now, just put the kernel stack way at the end of the sram bank */
+/* stack_address = ORIGIN(sram) + LENGTH(sram); */
 
+SECTIONS{
+    . = ORIGIN(flash);
+    .startup :
+    {
+        startup.o(.stack_address)
+        startup.o(.isr_table)
+    } < flash
+
+    .text : 
+    {
+        *(.text)
+        *(.rodata)
+    } < flash
+
+    .data :
+    {
+        *(.data)
+    } < sram 
+
+    .bss :
+    {
+        *(.bss)
+    } < sram 
+}
+
+
+/*
     _sidata = .;
     .data : AT (_sidata){
         _data_start = .;
@@ -33,4 +60,22 @@ SECTIONS{
         _bss_end = .;
     } > SRAM
    
-}
+
+    .stack_address :
+    {
+        *(*.stack_address)
+    } > flash
+
+    .isr_table : 
+    {
+        KEEP(*(*.isr_table .isr_table.*))
+    } > flash
+
+    .text : {
+        *(.text)
+    } > flash
+        
+    .rodata : { 
+        *(.rodata*)
+    } > flash
+   */

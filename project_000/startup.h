@@ -1,0 +1,51 @@
+#include "types.h"
+#define ISR_TABLE_LENGTH 64
+#define STACK_ADDRESS (void *)0x10002000 //8Kibibytes deep.
+
+//void isr_reset      (void) __attribute__((weak,alias("isr_default")));
+void isr_reset      (void);
+void isr_nmi        (void) __attribute__((weak,alias("isr_default")));
+void isr_hardfault  (void) __attribute__((weak,alias("isr_default")));
+void isr_memmanage  (void) __attribute__((weak,alias("isr_default")));
+void isr_busfault   (void) __attribute__((weak,alias("isr_default")));
+void isr_usagefault (void) __attribute__((weak,alias("isr_default")));
+void isr_svc        (void) __attribute__((weak,alias("isr_default")));
+void isr_debugmon   (void) __attribute__((weak,alias("isr_default")));
+void isr_pendsv     (void) __attribute__((weak,alias("isr_default")));
+void isr_sysTick    (void) __attribute__((weak,alias("isr_default")));
+void isr_watchdog   (void) __attribute__((weak,alias("isr_default")));
+void isr_timer0     (void) __attribute__((weak,alias("isr_default")));
+void isr_timer1     (void) __attribute__((weak,alias("isr_default")));
+void isr_timer2     (void) __attribute__((weak,alias("isr_default")));
+void isr_timer3     (void) __attribute__((weak,alias("isr_default")));
+void isr_uart0      (void) __attribute__((weak,alias("isr_default")));
+void isr_uart1      (void) __attribute__((weak,alias("isr_default")));
+void isr_uart2      (void) __attribute__((weak,alias("isr_default")));
+void isr_uart3      (void) __attribute__((weak,alias("isr_default")));
+void isr_pmw        (void) __attribute__((weak,alias("isr_default")));
+void isr_i2c0       (void) __attribute__((weak,alias("isr_default")));
+void isr_i2c1       (void) __attribute__((weak,alias("isr_default")));
+void isr_i2c2       (void) __attribute__((weak,alias("isr_default")));
+void isr_spi        (void) __attribute__((weak,alias("isr_default")));
+void isr_ssp0       (void) __attribute__((weak,alias("isr_default")));
+void isr_ssp1       (void) __attribute__((weak,alias("isr_default")));
+void isr_pll0       (void) __attribute__((weak,alias("isr_default")));
+void isr_rtc        (void) __attribute__((weak,alias("isr_default")));
+void isr_ext0       (void) __attribute__((weak,alias("isr_default")));
+void isr_ext1       (void) __attribute__((weak,alias("isr_default")));
+void isr_ext2       (void) __attribute__((weak,alias("isr_default")));
+void isr_ext3       (void) __attribute__((weak,alias("isr_default")));
+void isr_adc        (void) __attribute__((weak,alias("isr_default")));
+void isr_bod        (void) __attribute__((weak,alias("isr_default")));
+void isr_usb        (void) __attribute__((weak,alias("isr_default")));
+void isr_can        (void) __attribute__((weak,alias("isr_default")));
+void isr_dma        (void) __attribute__((weak,alias("isr_default")));
+void isr_i2s        (void) __attribute__((weak,alias("isr_default")));
+void isr_enet       (void) __attribute__((weak,alias("isr_default")));
+void isr_rit        (void) __attribute__((weak,alias("isr_default")));
+void isr_mcpwm      (void) __attribute__((weak,alias("isr_default")));
+void isr_qei        (void) __attribute__((weak,alias("isr_default")));
+void isr_pll1       (void) __attribute__((weak,alias("isr_default")));
+void isr_usbact     (void) __attribute__((weak,alias("isr_default")));
+void isr_canact     (void) __attribute__((weak,alias("isr_default")));
+void isr_soft0      (void) __attribute__((weak,alias("isr_default")));

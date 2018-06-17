@@ -1,55 +1,21 @@
+#include "startup.h"
+#include "meminit.h"
 #include "types.h"
-#define ISR_TABLE_LENGTH 64
-#define STACK_ADDRESS 0x10002000 //8Kibibytes deep.
 
-void *stack_address __attribute__ (section(".startup")) = STACK_ADDRESS;
+// these are all referenced in the linker script
+// and describe the bss and data sections
+//
+extern void *bss;
+extern size_t bss_size;
+extern void *data_start;
+extern void *data;
+extern size_t data_size;
 
-void isr_reset      (void) __attribute__((weak,alias("isr_default")));
-void isr_nmi        (void) __attribute__((weak,alias("isr_default")));
-void isr_hardfault  (void) __attribute__((weak,alias("isr_default")));
-void isr_memmanage  (void) __attribute__((weak,alias("isr_default")));
-void isr_busfault   (void) __attribute__((weak,alias("isr_default")));
-void isr_usagefault (void) __attribute__((weak,alias("isr_default")));
-void isr_svc        (void) __attribute__((weak,alias("isr_default")));
-void isr_debugmon   (void) __attribute__((weak,alias("isr_default")));
-void isr_pendsv     (void) __attribute__((weak,alias("isr_default")));
-void isr_sysTick    (void) __attribute__((weak,alias("isr_default")));
-void isr_watchdog   (void) __attribute__((weak,alias("isr_default")));
-void isr_timer0     (void) __attribute__((weak,alias("isr_default")));
-void isr_timer1     (void) __attribute__((weak,alias("isr_default")));
-void isr_timer2     (void) __attribute__((weak,alias("isr_default")));
-void isr_timer3     (void) __attribute__((weak,alias("isr_default")));
-void isr_uart0      (void) __attribute__((weak,alias("isr_default")));
-void isr_uart1      (void) __attribute__((weak,alias("isr_default")));
-void isr_uart2      (void) __attribute__((weak,alias("isr_default")));
-void isr_uart3      (void) __attribute__((weak,alias("isr_default")));
-void isr_pmw        (void) __attribute__((weak,alias("isr_default")));
-void isr_i2c0       (void) __attribute__((weak,alias("isr_default")));
-void isr_i2c1       (void) __attribute__((weak,alias("isr_default")));
-void isr_i2c2       (void) __attribute__((weak,alias("isr_default")));
-void isr_spi        (void) __attribute__((weak,alias("isr_default")));
-void isr_ssp0       (void) __attribute__((weak,alias("isr_default")));
-void isr_ssp1       (void) __attribute__((weak,alias("isr_default")));
-void isr_pll0       (void) __attribute__((weak,alias("isr_default")));
-void isr_rtc        (void) __attribute__((weak,alias("isr_default")));
-void isr_ext0       (void) __attribute__((weak,alias("isr_default")));
-void isr_ext1       (void) __attribute__((weak,alias("isr_default")));
-void isr_ext2       (void) __attribute__((weak,alias("isr_default")));
-void isr_ext3       (void) __attribute__((weak,alias("isr_default")));
-void isr_adc        (void) __attribute__((weak,alias("isr_default")));
-void isr_bod        (void) __attribute__((weak,alias("isr_default")));
-void isr_usb        (void) __attribute__((weak,alias("isr_default")));
-void isr_can        (void) __attribute__((weak,alias("isr_default")));
-void isr_dma        (void) __attribute__((weak,alias("isr_default")));
-void isr_i2s        (void) __attribute__((weak,alias("isr_default")));
-void isr_enet       (void) __attribute__((weak,alias("isr_default")));
-void isr_rit        (void) __attribute__((weak,alias("isr_default")));
-void isr_mcpwm      (void) __attribute__((weak,alias("isr_default")));
-void isr_qei        (void) __attribute__((weak,alias("isr_default")));
-void isr_pll1       (void) __attribute__((weak,alias("isr_default")));
-void isr_usbact     (void) __attribute__((weak,alias("isr_default")));
-void isr_canact     (void) __attribute__((weak,alias("isr_default")));
-void isr_soft0      (void) __attribute__((weak,alias("isr_default")));
+//void *stack_address __attribute__ (section(".startup")) = STACK_ADDRESS;
+
+void *stack_address = STACK_ADDRESS;
+void main(uint32_t argc, uint8_t **argv);
+
 
 // stack init is obtained in the linker script
 // externvoid *system_stack; 
@@ -63,13 +29,13 @@ void (*isr_table[ISR_TABLE_LENGTH])(void)=
     isr_memmanage,        //    4 
     isr_busfault,         //    5 
     isr_usagefault,       //    6 
-    NULL                  //    7 
-    NULL                  //    8 
-    NULL                  //    9 
-    NULL                  //    10
+    NULL,                 //    7 
+    NULL,                 //    8 
+    NULL,                 //    9 
+    NULL,                 //    10
     isr_svc,              //-5  11
     isr_debugmon,         //-4  12
-    NULL                  //-3  13
+    NULL,                 //-3  13
     isr_pendsv,           //-2  14
     isr_sysTick,          //-1  15 
     isr_watchdog,         // 0  16 0x40 WDT Watchdog Interrupt (WDINT)
@@ -131,38 +97,22 @@ void isr_default(void){
 
 
 
+/*  The system is started in the isr reset handler
+ * 
+ */
+void isr_reset(void)
+{
+    memcpy(data, data_start, data_size);
+    memset(bss, 0, bss_size);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    //init_data(&_data_start, &_data_end, &_sidata);
+    //init_bss(&_bss_start, &_bss_end);
+    //call main
+    main(0, NULL);
+    while(TRUE)
+    {
+        //do nothing
+        //this is what the system does if main ever exits
+    }
+} 
 
