@@ -21,9 +21,9 @@ int main(int argc, char **argv)
     while(TRUE)
     {
         PORT4_CLR = PIN28;
-	delay(1000000);
+        delay(100000000);
         PORT4_SET = PIN28;
-	delay(1000000);
+	    delay(100000000);
     }
     return 0;
 }

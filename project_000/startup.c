@@ -5,11 +5,11 @@
 // these are all referenced in the linker script
 // and describe the bss and data sections
 //
-extern void *bss;
-extern size_t bss_size;
-extern void *data_start;
-extern void *data;
-extern size_t data_size;
+extern void   *_bss;
+extern size_t  _bss_size;
+extern void   *_initial_data;
+extern void   *_data;
+extern size_t  _data_size;
 
 //void *stack_address __attribute__ (section(".startup")) = STACK_ADDRESS;
 
@@ -21,7 +21,7 @@ void main(uint32_t argc, uint8_t **argv);
 // externvoid *system_stack; 
 //the attribute links to the "vectors" location described in the linker script
 //void (*isr_table[ISR_TABLE_LENGTH])(void) __attribute__ ((section(".startup")))={
-void (*isr_table[ISR_TABLE_LENGTH])(void)=
+void (*isr_table[ISR_TABLE_LENGTH])(void) =
 {
     isr_reset,            //    1       
     isr_nmi,              //    2 
@@ -44,7 +44,7 @@ void (*isr_table[ISR_TABLE_LENGTH])(void)=
     isr_timer2,           // 3  19 0x4C Timer 2 Match 0-3 Capture 0-1
     isr_timer3,           // 4  20 0x50 Timer 3 Match 0-3 Capture 0-1
     isr_uart0,            // 5  21 0x54 UART0 Rx Line Status (RLS) Transmit Holding Register Empty (THRE) Rx Data Available (RDA) Character Time-out Indicator (CTI) End of Auto-Baud (ABEO) Auto-Baud Time-Out (ABTO)
-    isr_uart1,            // 6  22 0x58 UART1 Rx Line Status (RLS) Transmit Holding Register Empty (THRE) Rx Data Available (RDA) Character Time-out Indicator (CTI) Modem Control Change End of Auto-Baud (ABEO) Auto-Baud Time-Out (ABTO)
+    isr_uart1,            // 6  22 0x58 UART1 Rx Line Status (RLS) Transmit Holding Register Empty (THRE) Rx Data Available (RDA) Character Time-out Indicator (CTI) End of Auto-Baud (ABEO) Auto-Baud Time-Out (ABTO)
     isr_uart2,            // 7  23 0x5C UART 2 Rx Line Status (RLS) Transmit Holding Register Empty (THRE) Rx Data Available (RDA) Character Time-out Indicator (CTI) End of Auto-Baud (ABEO) Auto-Baud Time-Out (ABTO)
     isr_uart3,            // 8  24 0x60 UART 3 Rx Line Status (RLS) Transmit Holding Register Empty (THRE) Rx Data Available (RDA) Character Time-out Indicator (CTI) End of Auto-Baud (ABEO) Auto-Baud Time-Out (ABTO)
     isr_pmw,              // 9  25 0x64 PWM1 Match 0 - 6 of PWM1 Capture 0-1 of PWM1
@@ -72,7 +72,7 @@ void (*isr_table[ISR_TABLE_LENGTH])(void)=
     isr_qei,              // 31 47 0xBC Quadrature Encoder INX_Int, TIM_Int, VELC_Int, DIR_Int, ERR_Int, ENCLK_Int, POS0_Int, POS1_Int, POS2_Int, REV_Int, POS0REV_Int, POS1REV_Int, POS2REV_Int
     isr_pll1,             // 32 48 0xC0 PLL1 (USB PLL) PLL1 Lock (PLOCK1)
     isr_usbact,           // 33 49 0xC4 USB Activity Interrupt USB_NEED_CLK
-    isr_canact,           // 34 50 0xC8 CAN Activity Interrupt CAN1WAKE, CAN2WAKE                                                                                                                                                                                 
+    isr_canact,           // 34 50 0xC8 CAN Activity Interrupt CAN1WAKE, CAN2WAKE   
     NULL,                 //    51 
     NULL,                 //    52
     NULL,                 //    53
@@ -102,8 +102,8 @@ void isr_default(void){
  */
 void isr_reset(void)
 {
-    memcpy(data, data_start, data_size);
-    memset(bss, 0, bss_size);
+    memcpy(_data, _initial_data, _data_size);
+    memset(_bss, 0, _bss_size);
 
     //init_data(&_data_start, &_data_end, &_sidata);
     //init_bss(&_bss_start, &_bss_end);
