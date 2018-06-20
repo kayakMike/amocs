@@ -37,7 +37,7 @@ void *memcpy(void *dest, const void *src, size_t n)
     //size_t is the number of bytes
     size_t index = 0;
 
-    /* Possible  optimization?  PREMATURE OPTMIZATION is bad
+    /* Possible  optimization?  PREMATURE OPTMIZATION is the root of all evil
      *  Good for 4 byte aligned performance
      *  some jitter on non-4byte aligned sections.
     for(index = 0; index < n/4; index++)
@@ -63,7 +63,8 @@ void *memset(void *s, int8_t c, size_t n)
 {
     size_t index = 0;
 
-    /* Possible IF def optimization?  PREMATURE OPTMIZATION is bad
+    /* Possible IF def optimization?  PREMATURE OPTMIZATION is the root of all evil
+     * well 97% of the time... leaving commented out!
     int8_t bucket[] = { c, c, c, c };
     for(index = 0; index < n/4; index++)
     {
